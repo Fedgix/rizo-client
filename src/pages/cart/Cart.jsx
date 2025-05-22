@@ -1,29 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
 import { BiMinus, BiPlus } from "react-icons/bi";
-import { BsTrash2 } from "react-icons/bs";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 export default function Cart() {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([
-    {
-      id: "1",
-      name: "White Adrenaline Tee",
-      price: 984.0,
-      size: "S",
-      quantity: 1,
-      image: "product/Screenshot 2025-05-01 at 10.52.27 PM 1 (1).png",
-    },
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setCartItems([
+        {
+          id: "1",
+          name: "White Adrenaline Tee",
+          price: 984.0,
+          size: "S",
+          quantity: 1,
+          image: "product/Screenshot 2025-05-01 at 10.52.27 PM 1 (1).png",
+        },
+      ]);
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const updateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
-
     setCartItems((items) =>
       items.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
@@ -40,142 +49,209 @@ export default function Cart() {
   };
 
   return (
-    <div className=" flex flex-col w-full h-full">
-      <Header />
-
-      <main className="flex  flex-col  w-full py-10 h-screen">
-        <div className="flex justify-between items-center w-full md:px-0 px-4  mb-8">
-          <h1 className=" md:text-3xl text-2xl poppins-medium md:px-32   font-bold">
-            Your cart
-          </h1>
-          <abbr
-            href="/shop"
-            className="md:text-xs text-[10px]  md:px-32 font-medium text-gray-600 underline"
-          >
-            Continue shopping
-          </abbr>
-        </div>
-
-        {cartItems.length > 0 ? (
-          <div className="flex flex-col  relative py-10">
-            <div className="border-b md:px-32 px-2 pb-2 mb-4 grid grid-cols-12 gap-4">
-              <div className="col-span-6 font-medium text-xs uppercase text-gray-500">
-                Product
-              </div>
-              <div className="col-span-3 font-medium text-xs uppercase text-gray-500 text-center">
-                Quantity
-              </div>
-              <div className="col-span-3 font-medium text-xs uppercase text-gray-500 text-right">
-                Total
-              </div>
+    <div className="flex flex-col w-full h-full">
+      {isLoading ? (
+        // Skeleton layout when loading
+        <div className="animate-pulse">
+          {/* Header Skeleton */}
+          <Skeleton variant="rectangular" width="100%" height={80} animation="wave" />
+          
+          {/* Main Content Skeleton */}
+          <div className="flex flex-col w-full py-10 h-screen px-4 md:px-32">
+            {/* Title and Continue Shopping Skeleton */}
+            <div className="flex justify-between items-center mb-8">
+              <Skeleton variant="text" width={150} height={40} animation="wave" />
+              <Skeleton variant="text" width={120} height={20} animation="wave" />
             </div>
 
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-12  md:px-32 px-2 gap-4 py-3 border-b"
-              >
-                <div className="col-span-6 flex justify-start items-center gap-4">
-                  <div className="md:w-20 md:h-20 w-16 h-16 relative flex justify-center items-center  rounded">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className=" font-semibold text-black md:text-xs text-[10px]">
-                      {item.name}
-                    </h3>
-                    <p className="text-gray-600 md:text-xs text-[10px] font-semibold mt-1">
-                      ₹ {item.price.toFixed(2)}
-                    </p>
-                    <p className="text-gray-600 mt-1 md:text-xs text-[10px] font-semibold">
-                      Size: {item.size}
-                    </p>
+            {/* Cart Header Skeleton */}
+            <div className="grid grid-cols-12 gap-4 pb-2 mb-4 border-b">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className={i === 0 ? "col-span-6" : "col-span-3"}>
+                  <Skeleton variant="text" width="80%" height={20} animation="wave" />
+                </div>
+              ))}
+            </div>
+
+            {/* Cart Items Skeleton */}
+            {[...Array(2)].map((_, index) => (
+              <div key={index} className="grid grid-cols-12 gap-4 py-3 border-b">
+                {/* Product Column */}
+                <div className="col-span-6 flex gap-4">
+                  <Skeleton variant="rectangular" width={80} height={80} animation="wave" />
+                  <div className="flex flex-col justify-center">
+                    <Skeleton variant="text" width={120} height={20} animation="wave" />
+                    <Skeleton variant="text" width={80} height={16} animation="wave" />
+                    <Skeleton variant="text" width={60} height={16} animation="wave" />
                   </div>
                 </div>
-
-                <div className="col-span-3 flex items-center justify-center ">
-                  <div className="flex items-center border-[1.5px] border-[font-semibold]   rounded-md">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="md:px-3  py-1 "
-                      aria-label="Decrease quantity"
-                    >
-                      <BiMinus className="h-3 w-3 " />
-                    </button>
-                    <input
-                      type="text"
-                      value={item.quantity}
-                      onChange={(e) => {
-                        const val = Number.parseInt(e.target.value);
-                        if (!isNaN(val)) updateQuantity(item.id, val);
-                      }}
-                      className="w-10 text-center  md:text-xs text-[10px] py-1"
-                      aria-label="Quantity"
-                    />
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="md:px-3 py-1 hover:bg-gray-100"
-                      aria-label="Increase quantity"
-                    >
-                      <BiPlus className="h-3 w-3" />
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="ml-2  hover:text-red-600"
-                    aria-label="Remove item"
-                  >
-                    <FaRegTrashCan className="h-3 w-3" />
-                  </button>
+                
+                {/* Quantity Column */}
+                <div className="col-span-3 flex items-center justify-center">
+                  <Skeleton variant="rectangular" width={100} height={30} animation="wave" />
                 </div>
-
-                <div className="col-span-3 flex items-center justify-end font-semibold md:text-xs text-[10px]">
-                  ₹ {calculateTotal(item).toFixed(2)}
+                
+                {/* Total Column */}
+                <div className="col-span-3 flex items-center justify-end">
+                  <Skeleton variant="text" width={60} height={20} animation="wave" />
                 </div>
               </div>
             ))}
 
-            <div className="mt-20 flex justify-end md:px-32 px-2   w-full items-end">
-              <div className=" md:w-1/3 ">
-                <div className="flex justify-between py-2">
-                  <span className="font-bold text-sm">Estimated total </span>
-                  <span className="font-bold text-sm">
-                    ₹{" "}
-                    {cartItems
-                      .reduce((total, item) => total + calculateTotal(item), 0)
-                      .toFixed(2)}
-                  </span>
-                </div>
-                <p className="text-gray-500 text-xs mb-4">
-                  Taxes included. Discounts and shipping calculated at checkout.
-                </p>
-                <button
-                  onClick={() => navigate("/checkout")}
-                  className="w-full py-3 text-sm bg-black text-white rounded-md"
-                >
-                  Checkout
-                </button>
+            {/* Checkout Summary Skeleton */}
+            <div className="mt-20 flex justify-end w-full">
+              <div className="md:w-1/3 w-full">
+                <Skeleton variant="text" width="100%" height={30} animation="wave" />
+                <Skeleton variant="text" width="100%" height={30} animation="wave" />
+                <Skeleton variant="text" width="100%" height={20} animation="wave" sx={{ mb: 2 }} />
+                <Skeleton variant="rectangular" width="100%" height={45} animation="wave" />
               </div>
             </div>
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <h2 className="text-xl font-medium mb-4">Your cart is empty</h2>
-            <p className="text-gray-500 mb-8">
-              Looks like you haven't added anything to your cart yet.
-            </p>
-            <button asChild>
-              <a href="/shop">Continue Shopping</a>
-            </button>
-          </div>
-        )}
-      </main>
 
-      <Footer />
+          {/* Footer Skeleton */}
+          <Skeleton variant="rectangular" width="100%" height={200} animation="wave" />
+        </div>
+      ) : (
+        // Actual content when loaded
+        <>
+          <Header />
+
+          <main className="flex flex-col w-full py-10 h-screen">
+            <div className="flex justify-between items-center w-full md:px-0 px-4 mb-8">
+              <h1 className="md:text-3xl text-2xl poppins-medium md:px-32 font-bold">
+                Your cart
+              </h1>
+              <abbr
+                href="/shop"
+                className="md:text-xs text-[10px] md:px-32 font-medium text-gray-600 underline"
+              >
+                Continue shopping
+              </abbr>
+            </div>
+
+            {cartItems.length > 0 ? (
+              <div className="flex flex-col relative py-10">
+                <div className="border-b md:px-32 px-2 pb-2 mb-4 grid grid-cols-12 gap-4">
+                  <div className="col-span-6 font-medium text-xs uppercase text-gray-500">
+                    Product
+                  </div>
+                  <div className="col-span-3 font-medium text-xs uppercase text-gray-500 text-center">
+                    Quantity
+                  </div>
+                  <div className="col-span-3 font-medium text-xs uppercase text-gray-500 text-right">
+                    Total
+                  </div>
+                </div>
+
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-12 md:px-32 px-2 gap-4 py-3 border-b"
+                  >
+                    <div className="col-span-6 flex justify-start items-center gap-4">
+                      <div className="md:w-20 md:h-20 w-16 h-16 relative flex justify-center items-center rounded">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-black md:text-xs text-[10px]">
+                          {item.name}
+                        </h3>
+                        <p className="text-gray-600 md:text-xs text-[10px] font-semibold mt-1">
+                          ₹ {item.price.toFixed(2)}
+                        </p>
+                        <p className="text-gray-600 mt-1 md:text-xs text-[10px] font-semibold">
+                          Size: {item.size}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="col-span-3 flex items-center justify-center">
+                      <div className="flex items-center border-[1.5px] border-[font-semibold] rounded-md">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="md:px-3 py-1"
+                          aria-label="Decrease quantity"
+                        >
+                          <BiMinus className="h-3 w-3" />
+                        </button>
+                        <input
+                          type="text"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const val = Number.parseInt(e.target.value);
+                            if (!isNaN(val)) updateQuantity(item.id, val);
+                          }}
+                          className="w-10 text-center md:text-xs text-[10px] py-1"
+                          aria-label="Quantity"
+                        />
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="md:px-3 py-1 hover:bg-gray-100"
+                          aria-label="Increase quantity"
+                        >
+                          <BiPlus className="h-3 w-3" />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="ml-2 hover:text-red-600"
+                        aria-label="Remove item"
+                      >
+                        <FaRegTrashCan className="h-3 w-3" />
+                      </button>
+                    </div>
+
+                    <div className="col-span-3 flex items-center justify-end font-semibold md:text-xs text-[10px]">
+                      ₹ {calculateTotal(item).toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+
+                <div className="mt-20 flex justify-end md:px-32 px-2 w-full items-end">
+                  <div className="md:w-1/3">
+                    <div className="flex justify-between py-2">
+                      <span className="font-bold text-sm">Estimated total</span>
+                      <span className="font-bold text-sm">
+                        ₹{" "}
+                        {cartItems
+                          .reduce((total, item) => total + calculateTotal(item), 0)
+                          .toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="text-gray-500 text-xs mb-4">
+                      Taxes included. Discounts and shipping calculated at checkout.
+                    </p>
+                    <button
+                      onClick={() => navigate("/checkout")}
+                      className="w-full py-3 text-sm bg-black text-white rounded-md"
+                    >
+                      Checkout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <h2 className="text-xl font-medium mb-4">Your cart is empty</h2>
+                <p className="text-gray-500 mb-8">
+                  Looks like you haven't added anything to your cart yet.
+                </p>
+                <button asChild>
+                  <a href="/shop">Continue Shopping</a>
+                </button>
+              </div>
+            )}
+          </main>
+
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

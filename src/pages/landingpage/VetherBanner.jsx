@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Box from "@mui/material/Box";
+import Skeleton from "@mui/material/Skeleton";
 
 const banners = [
   {
@@ -26,11 +28,19 @@ const banners = [
     buttonText: "Shop Now",
     image: "banner/image (17).png",
   },
-  // Add more banners as needed
 ];
 
 const VetherBanner = () => {
   const [sliderRef, setSliderRef] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const settings = {
     dots: false,
@@ -46,20 +56,74 @@ const VetherBanner = () => {
     autoplaySpeed: 3000,
   };
 
+  if (isLoading) {
+    return (
+      <div className="relative w-full py-10 animate-pulse">
+        {/* Banner Skeleton */}
+        <div className="px-4">
+          <div className="flex flex-col bg-[#f6f6f6] md:flex-row items-center rounded-lg overflow-hidden shadow-lg">
+            {/* Image Skeleton */}
+            <div className="md:w-1/2 h-64 md:h-96">
+              <Skeleton 
+                variant="rectangular" 
+                width="100%" 
+                height="100%" 
+                animation="wave" 
+              />
+            </div>
+            
+            {/* Content Skeleton */}
+            <div className="md:w-1/2 p-8 md:p-12">
+              <Skeleton variant="text" width="60%" height={40} animation="wave" />
+              <Skeleton variant="text" width="40%" height={30} animation="wave" sx={{ mt: 1 }} />
+              
+              <div className="mb-6">
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton 
+                    key={i} 
+                    variant="text" 
+                    width="100%" 
+                    height={20} 
+                    animation="wave" 
+                    sx={{ mt: 1 }} 
+                  />
+                ))}
+              </div>
+              
+              <Skeleton 
+                variant="rectangular" 
+                width={120} 
+                height={40} 
+                animation="wave" 
+                sx={{ borderRadius: '4px' }} 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Buttons Skeleton */}
+        <div className="flex justify-center mt-6 space-x-2">
+          <Skeleton variant="circular" width={32} height={32} animation="wave" />
+          <Skeleton variant="circular" width={32} height={32} animation="wave" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full py-10">
       <Slider ref={setSliderRef} {...settings}>
         {banners.map((banner, index) => (
           <div key={index} className="px-4">
-            <div className="flex flex-col bg-[#dadada] md:flex-row items-center  rounded-lg overflow-hidden shadow-lg">
+            <div className="flex flex-col bg-[#dadada] md:flex-row items-center rounded-lg overflow-hidden shadow-lg">
               <div className="md:w-1/2 h-64 md:h-96">
                 <img
                   src={banner.image}
                   alt={banner.title}
-                  className="  w-full h-full object-fit"
+                  className="w-full h-full object-fit"
                 />
               </div>
-              <div className="md:w-1/2 p-8 md:p-12 ">
+              <div className="md:w-1/2 p-8 md:p-12">
                 <h2 className="text-base md:text-4xl font-bold mb-2">
                   {banner.title}
                 </h2>
@@ -91,7 +155,7 @@ const VetherBanner = () => {
         </button>
         <button
           onClick={() => sliderRef?.slickNext()}
-          className="bg-white border border-gray-300 shadow-lg rounded-full p-2 w-8 h-8 flex items-center justify-center  hover:bg-gray-100"
+          className="bg-white border border-gray-300 shadow-lg rounded-full p-2 w-8 h-8 flex items-center justify-center hover:bg-gray-100"
         >
           &gt;
         </button>
