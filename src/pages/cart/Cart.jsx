@@ -40,25 +40,25 @@ export default function Cart() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className=" flex flex-col w-full h-full">
       <Header />
 
-      <main className="flex-1  w-full  md:py-20">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className=" md:text-3xl text-2xl poppins-medium px-32  font-bold">
+      <main className="flex  flex-col  w-full py-10 h-screen">
+        <div className="flex justify-between items-center w-full md:px-0 px-4  mb-8">
+          <h1 className=" md:text-3xl text-2xl poppins-medium md:px-32   font-bold">
             Your cart
           </h1>
           <abbr
             href="/shop"
-            className="md:text-xs text-[10px]  px-32 font-medium text-gray-600 underline"
+            className="md:text-xs text-[10px]  md:px-32 font-medium text-gray-600 underline"
           >
             Continue shopping
           </abbr>
         </div>
 
         {cartItems.length > 0 ? (
-          <div className="flex flex-col relative">
-            <div className="border-b px-32 pb-2 mb-4 grid grid-cols-12 gap-4">
+          <div className="flex flex-col  relative py-10">
+            <div className="border-b md:px-32 px-2 pb-2 mb-4 grid grid-cols-12 gap-4">
               <div className="col-span-6 font-medium text-xs uppercase text-gray-500">
                 Product
               </div>
@@ -73,7 +73,7 @@ export default function Cart() {
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="grid grid-cols-12  px-32 gap-4 py-3 border-b"
+                className="grid grid-cols-12  md:px-32 px-2 gap-4 py-3 border-b"
               >
                 <div className="col-span-6 flex justify-start items-center gap-4">
                   <div className="md:w-20 md:h-20 w-16 h-16 relative flex justify-center items-center  rounded">
@@ -139,8 +139,8 @@ export default function Cart() {
               </div>
             ))}
 
-            <div className="mt-20 flex justify-end px-32   w-full items-end">
-              <div className=" md:w-1/3">
+            <div className="mt-20 flex justify-end md:px-32 px-2   w-full items-end">
+              <div className=" md:w-1/3 ">
                 <div className="flex justify-between py-2">
                   <span className="font-bold text-sm">Estimated total </span>
                   <span className="font-bold text-sm">
