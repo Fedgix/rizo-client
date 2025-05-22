@@ -54,13 +54,13 @@ export const NewArrivals = () => {
   ];
 
   return (
-    <div className="w-full  py-16 bg-white border-none ">
+    <div className="w-full  md:py-16 bg-white border-none ">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-medium mb-2 poppins-medium text-[#484848]">
           New Arrivals
         </h2>
         <div className="flex w-full justify-center items-center">
-          <p className="text-sm text-gray-400 mb-6 w-1/3 ">
+          <p className="md:text-sm text-xs text-gray-400 mb-6 md:w-1/3 md:px-0 px-4 ">
             Step into the latest drops that define the season. From bold basics
             to fresh fits—just landed.
           </p>

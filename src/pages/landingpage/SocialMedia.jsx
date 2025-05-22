@@ -47,11 +47,11 @@ const SocialMedia = () => {
   return (
     <div className="w-full bg-white  py-12">
       <div className="text-center mb-20">
-        <h2 className="text-3xl font-medium mb-2 poppins-medium text-[#484848]">
+        <h2 className="md:text-3xl text-2xl font-medium mb-2 poppins-medium text-[#484848]">
           Follow Us On Instagram
         </h2>
         <div className="flex w-full justify-center items-center">
-          <p className="text-sm text-gray-400 mb-6 w-1/3 ">
+          <p className="md:text-sm text-xs text-gray-400 mb-6 md:px-0 px-2 md:w-1/3 ">
             Connect with us on Instagram to stay updated on the latest trends
             and exclusive offers from our store.
           </p>
@@ -63,7 +63,7 @@ const SocialMedia = () => {
             <div
               key={img.id}
               className={`flex  w-[17.2%]  } ${
-                img.isSmall ? "h-[200px]" : "h-[250px] "
+                img.isSmall ? "h-[120px] md:h-[200px]" : "h-[150px] md:h-[250px] "
               } overflow-hidden`}
             >
               <img
@@ -86,18 +86,18 @@ const SocialMedia = () => {
         </div>
 
         <div className="text-center max-w-md">
-          <h2 className="text-3xl font-medium mb-2 poppins-medium text-[#484848]">
+          <h2 className="md:text-3xl text-2xl font-medium mb-2 poppins-medium text-[#484848]">
             Subscribe To Our Newsletter
           </h2>
           <div className="flex w-full justify-center items-center">
-            <p className="text-xs text-gray-400 mb-6 ">
+            <p className="text-xs text-gray-400 mb-6 md:px-0 px-2 ">
               {" "}
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Scelerisque duis ultrices sollicitudin aliquam sem. Scelerisque
               duis ultrices sollicitudin
             </p>
           </div>
-          <div className="flex flex-col items-center mt-5">
+          <div className="flex flex-col items-center mt-5 md:px-0 px-4">
             <input
               type="email"
               placeholder="rizo@gmail.com"

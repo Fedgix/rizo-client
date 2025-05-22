@@ -90,21 +90,21 @@ const LandingCategory = () => {
         </div>
       </div>
 
-      <div className="md:w-1/2 relative h-[300px] ">
+      <div className="md:w-1/2 relative md:h-[300px] h-[200px ] ">
         <Slider ref={setSliderRef} {...settings}>
           {categories.map((cat, index) => (
-            <div key={index} className="px-2 relative">
+            <div key={index} className="px-2 ">
               <div
-                className={`overflow-hidden transition-all flex-col justify-center items-center duration-300 ${
-                  index === currentSlide ? "h-96" : "h-72"
-                } bg-gray-100 relative`}
+                className={`overflow-hidden transition-all  flex-col justify-center items-center duration-300 ${
+                  index === currentSlide ? "md:h-96 h-52" : "md:h-72 h-40"
+                } bg-green-800 relative`}
               >
                 <img
                   src={cat.image}
                   alt={cat.label}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-4 left-1/2  transform -translate-x-1/2 bg-white text-black px-4 py-2 shadow text-center">
+                <div className="absolute bottom-4 left-1/2 md:text-base text-xs  transform -translate-x-1/2 bg-white text-black px-4 py-2 shadow text-center">
                   {cat.label}
                 </div>
               </div>

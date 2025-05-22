@@ -43,20 +43,22 @@ export default function Cart() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1  w-full px-32 py-20">
+      <main className="flex-1  w-full  md:py-20">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Your cart</h1>
+          <h1 className=" md:text-3xl text-2xl poppins-medium px-32  font-bold">
+            Your cart
+          </h1>
           <abbr
             href="/shop"
-            className="text-xs font-medium text-gray-600 underline"
+            className="md:text-xs text-[10px]  px-32 font-medium text-gray-600 underline"
           >
             Continue shopping
           </abbr>
         </div>
 
         {cartItems.length > 0 ? (
-          <>
-            <div className="border-b pb-2 mb-4 grid grid-cols-12 gap-4">
+          <div className="flex flex-col relative">
+            <div className="border-b px-32 pb-2 mb-4 grid grid-cols-12 gap-4">
               <div className="col-span-6 font-medium text-xs uppercase text-gray-500">
                 Product
               </div>
@@ -71,10 +73,10 @@ export default function Cart() {
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="grid grid-cols-12 gap-4 py-3 border-b"
+                className="grid grid-cols-12  px-32 gap-4 py-3 border-b"
               >
-                <div className="col-span-6 flex gap-4">
-                  <div className="w-20 h-20 relative bg-gray-100 rounded">
+                <div className="col-span-6 flex justify-start items-center gap-4">
+                  <div className="md:w-20 md:h-20 w-16 h-16 relative flex justify-center items-center  rounded">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -83,23 +85,23 @@ export default function Cart() {
                     />
                   </div>
                   <div>
-                    <h3 className=" font-semibold text-black text-xs">
+                    <h3 className=" font-semibold text-black md:text-xs text-[10px]">
                       {item.name}
                     </h3>
-                    <p className="text-gray-600 text-xs font-semibold mt-1">
+                    <p className="text-gray-600 md:text-xs text-[10px] font-semibold mt-1">
                       ₹ {item.price.toFixed(2)}
                     </p>
-                    <p className="text-gray-600 mt-1 text-xs font-semibold">
+                    <p className="text-gray-600 mt-1 md:text-xs text-[10px] font-semibold">
                       Size: {item.size}
                     </p>
                   </div>
                 </div>
 
-                <div className="col-span-3 flex items-center justify-center">
+                <div className="col-span-3 flex items-center justify-center ">
                   <div className="flex items-center border-[1.5px] border-[font-semibold]   rounded-md">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="px-3 py-1 "
+                      className="md:px-3  py-1 "
                       aria-label="Decrease quantity"
                     >
                       <BiMinus className="h-3 w-3 " />
@@ -111,12 +113,12 @@ export default function Cart() {
                         const val = Number.parseInt(e.target.value);
                         if (!isNaN(val)) updateQuantity(item.id, val);
                       }}
-                      className="w-10 text-center  text-sm py-1"
+                      className="w-10 text-center  md:text-xs text-[10px] py-1"
                       aria-label="Quantity"
                     />
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-3 py-1 hover:bg-gray-100"
+                      className="md:px-3 py-1 hover:bg-gray-100"
                       aria-label="Increase quantity"
                     >
                       <BiPlus className="h-3 w-3" />
@@ -131,14 +133,14 @@ export default function Cart() {
                   </button>
                 </div>
 
-                <div className="col-span-3 flex items-center justify-end font-semibold text-sm">
+                <div className="col-span-3 flex items-center justify-end font-semibold md:text-xs text-[10px]">
                   ₹ {calculateTotal(item).toFixed(2)}
                 </div>
               </div>
             ))}
 
-            <div className="mt-20 flex justify-end  w-full items-end">
-              <div className=" w-1/3">
+            <div className="mt-20 flex justify-end px-32   w-full items-end">
+              <div className=" md:w-1/3">
                 <div className="flex justify-between py-2">
                   <span className="font-bold text-sm">Estimated total </span>
                   <span className="font-bold text-sm">
@@ -159,7 +161,7 @@ export default function Cart() {
                 </button>
               </div>
             </div>
-          </>
+          </div>
         ) : (
           <div className="text-center py-12">
             <h2 className="text-xl font-medium mb-4">Your cart is empty</h2>

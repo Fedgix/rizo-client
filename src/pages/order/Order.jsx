@@ -24,14 +24,13 @@ const Order = () => {
     <div className=" w-full  flex flex-col justify-between">
       <Header />
       <div className=" py-20 h-screen">
-
-        <div className="border-b-[2px] border-gray-100 rounded-md overflow-hidden">
+        <div className="border-b-[2px] border-gray-100 w-full rounded-md overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-2 px-20  border-b">
-            <div className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase">
+          <div className="grid grid-cols-2 md:px-20 px-4  border-b">
+            <div className="py-3 md:px-4 text-xs font-semibold text-gray-400 uppercase">
               Product
             </div>
-            <div className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase">
+            <div className="py-3 md:px-4 px-10 text-xs font-semibold text-gray-400 uppercase">
               Status
             </div>
           </div>
@@ -40,10 +39,10 @@ const Order = () => {
           {orderItems.map((item) => (
             <div
               key={item.id}
-              className="grid px-20 grid-cols-2 border-b-[2px] border-gray-100 last:border-b-0"
+              className="grid md:px-20 px-5 grid-cols-2 border-b-[2px] border-gray-100 last:border-b-0"
             >
-              <div className="py-7 flex items-center gap-4">
-                <div className="w-16 h-16 border  relative bg-gray-100 rounded-md">
+              <div className="py-7  flex items-center gap-2">
+                <div className="w-16 md:w-20 md:h-20 h-16 border  relative bg-gray-100 rounded-md">
                   <img
                     src={item.image || "/placeholder.svg"}
                     alt={item.name}
@@ -52,18 +51,24 @@ const Order = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="font-medium text-xs">{item.name}</h3>
-                  <p className="text-gray-600 text-xs mt-1">
+                  <h3 className="font-medium md:text-xs text-[10px]">
+                    {item.name}
+                  </h3>
+                  <p className="text-gray-600 md:text-xs text-[10px] mt-1">
                     ₹ {item.price.toFixed(2)}
                   </p>
-                  <p className="text-gray-600 text-xs mt-1">Size: {item.size}</p>
+                  <p className="text-gray-600 md:text-xs text-[10px] mt-1">
+                    Size: {item.size}
+                  </p>
                 </div>
               </div>
-              <div className="p-4 flex justify-between items-center">
-                <span className=" font-medium text-xs">{item.status}</span>
+              <div className="md:p-4 flex md:justify-between justify-end gap-2 items-center">
+                <span className=" font-medium md:text-xs text-[8px]">
+                  {item.status}
+                </span>
                 <button
                   onClick={() => handleTrackOrder(item.id)}
-                  className="bg-black hover:bg-black/90 text-white  px-10 text-[10px] py-3 shadow-xl rounded-md"
+                  className="bg-black hover:bg-black/90 text-white  md:px-10 px-2 md:text-xs text-[7px] py-3 shadow-xl rounded-md"
                 >
                   Track Your Order
                 </button>

@@ -102,14 +102,14 @@ const Checkout = () => {
   return (
     <div className="w-full h-full poppins-thin">
       <Header />
-      <div className="flex justify-center p-8 md:p-20">
-        <div className="w-full p-6 rounded-lg">
+      <div className="flex justify-center p-2 md:p-20">
+        <div className="w-full md:p-6 rounded-lg">
           <form
             onSubmit={formik.handleSubmit}
-            className="space-y-4 gap-4  flex"
+            className="md:space-y-4 space-y-9  md:gap-4  md:flex"
           >
-            <div className="w-1/2 space-y-3 px-5">
-              <h2 className="text-4xl  poppins-medium font-semibold mb-6">
+            <div className="md:w-1/2 w-full space-y-3 md:px-5 px-2">
+              <h2 className="md:text-4xl text-2xl  poppins-medium font-semibold mb-6">
                 Shipping Information
               </h2>
               <div className="flex gap-2">
@@ -293,7 +293,7 @@ const Checkout = () => {
                       }
                     }}
                     onBlur={() => formik.setFieldTouched("state", true)}
-                    placeholder="Select state..."
+                    placeholder=" state..."
                     isSearchable
                     styles={{
                       control: (provided) => ({
@@ -451,9 +451,9 @@ const Checkout = () => {
                 </label>
               </div>
             </div>
-            <div className="w-1/2 border-l-[2px] border-gray-100">
-              <div className="px-7">
-                <div className="space-y-8">
+            <div className="md:w-1/2 md:border-l-[2px] md:hidden-border-t-[2px] md:py-0 py-4 border-gray-100">
+              <div className="md:px-7 px-2">
+                <div className="md:space-y-8 space-y-3">
                   {/* Order Summary */}
                   <div className=" ">
                     <div className="flex justify-between items-center py-2">
@@ -534,11 +534,11 @@ const Checkout = () => {
                           <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center">
                             <div className="w-2 h-2 rounded-full bg-black"></div>
                           </div>
-                          <span className="text-xs">
+                          <span className="md:text-xs text-[10px] md:w-full w-[90%]">
                             Razorpay Payment Gateway (UPI, Cards & Netbanking)
                           </span>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex md:gap-1 px-2">
                           <img
                             src="new arrivels/visa-logo-visa-icon-transparent-free-png.webp"
                             alt="Visa"
@@ -567,7 +567,7 @@ const Checkout = () => {
                         <p className="text-[9px] text-gray-500 mt-3 text-center">
                           After clicking "Pay now", you will be redirected to{" "}
                           <br />
-                          <span className="font-medium">
+                          <span className="font-medium ">
                             Razorpay Payment Gateway (UPI, Cards & Netbanking)
                           </span>{" "}
                           <br />
@@ -604,8 +604,9 @@ const Checkout = () => {
                   {/* Pay Now Button */}
                   <div className="pt-4">
                     <button
-                    onClick={()=>navigate("/order")}
-                    className="w-full bg-black hover:bg-black/90 text-white py-3 rounded-md">
+                      onClick={() => navigate("/order")}
+                      className="w-full bg-black hover:bg-black/90 text-white py-3 rounded-md"
+                    >
                       Pay now
                     </button>
                   </div>

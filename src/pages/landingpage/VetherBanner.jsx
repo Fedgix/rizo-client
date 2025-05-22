@@ -56,24 +56,24 @@ const VetherBanner = () => {
                 <img
                   src={banner.image}
                   alt={banner.title}
-                  className="w-full h-full object-fit"
+                  className="  w-full h-full object-fit"
                 />
               </div>
               <div className="md:w-1/2 p-8 md:p-12 ">
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                <h2 className="text-base md:text-4xl font-bold mb-2">
                   {banner.title}
                 </h2>
-                <h3 className="text-xl md:text-2xl text-gray-600 mb-4">
+                <h3 className="text-sm md:text-2xl text-gray-600 mb-4">
                   {banner.subtitle}
                 </h3>
                 <div className="mb-6">
                   {banner.description.map((line, i) => (
-                    <p key={i} className="text-gray-700 mb-2">
+                    <p key={i} className="text-gray-700 mb-2 md:text-base text-xs">
                       {line}
                     </p>
                   ))}
                 </div>
-                <button className="bg-black text-white py-2 px-6 rounded-md hover:bg-gray-800 transition">
+                <button className="bg-black text-white py-2 px-6 md:text-base text-xs rounded-md hover:bg-gray-800 transition">
                   {banner.buttonText}
                 </button>
               </div>

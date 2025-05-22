@@ -32,93 +32,81 @@ const Contact = () => {
   });
 
   return (
-    <div className="w-full h-full ">
+    <div className="w-full h-screen flex flex-col justify-between ">
       {/* <div className="h-10 bg-red-400"></div> */}
       <Header />
-      <div className="flex justify-center p-20 ">
-        <div className="w-2/3 p-6  rounded-lg">
-          <h2 className="text-4xl poppins-medium font-semibold mb-6">
+      <div className="flex justify-center md:p-20  ">
+        <div className="md:w-2/3 p-6  rounded-lg">
+          <h2 className="md:text-4xl text-3xl poppins-medium mb-6">
             Contact
           </h2>
 
           <form onSubmit={formik.handleSubmit} className="space-y-4 ">
-            <div className="flex gap-2">
-              <TextField
-                color="xxw"
-                fullWidth
-                size="small"
-                id="name"
-                name="name"
-                label="Name"
-                variant="outlined"
-                value={formik.values.name}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  if (formik.errors.name) {
-                    formik.setErrors({ ...formik.errors, name: undefined });
-                  }
-                }}
-                onBlur={formik.handleBlur}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                className="text-green-300"
-                sx={{
-                  "& .MuiInputBase-input": {
-                    color: "black",
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "black",
-                    fontSize: "0.70rem",
-                  },
-                  "& .Mui-focused": {
-                    color: "black",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "black",
+            <div className="flex flex-col md:flex-row md:gap-4 gap-3  justify-center items-center">
+              <div className="w-full md:w-1/2">
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="name"
+                  name="name"
+                  label="Name"
+                  variant="outlined"
+                  value={formik.values.name}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    if (formik.errors.name) {
+                      formik.setErrors({ ...formik.errors, name: undefined });
+                    }
+                  }}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  sx={{
+                    "& .MuiInputBase-input": { color: "black" },
+                    "& .MuiInputLabel-root": {
+                      color: "black",
+                      fontSize: "0.70rem",
                     },
-                    height: "40px",
-                  },
-                }}
-              />
-
-              <TextField
-                color="xxw"
-                fullWidth
-                size="small"
-                id="email"
-                name="email"
-                label="Email"
-                variant="outlined"
-                type="email"
-                value={formik.values.email}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  if (formik.errors.email) {
-                    formik.setErrors({ ...formik.errors, email: undefined });
-                  }
-                }}
-                onBlur={formik.handleBlur}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    color: "black",
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "black",
-                    fontSize: "0.70rem",
-                  },
-                  "& .Mui-focused": {
-                    color: "black",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "black",
+                    "& .Mui-focused": { color: "black" },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "black" },
+                      height: "40px",
                     },
+                  }}
+                />
+              </div>
 
-                    height: "40px",
-                  },
-                }}
-              />
+              <div className="w-full md:w-1/2">
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="email"
+                  name="email"
+                  label="Email"
+                  type="email"
+                  variant="outlined"
+                  value={formik.values.email}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    if (formik.errors.email) {
+                      formik.setErrors({ ...formik.errors, email: undefined });
+                    }
+                  }}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  sx={{
+                    "& .MuiInputBase-input": { color: "black" },
+                    "& .MuiInputLabel-root": {
+                      color: "black",
+                      fontSize: "0.70rem",
+                    },
+                    "& .Mui-focused": { color: "black" },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "black" },
+                      height: "40px",
+                    },
+                  }}
+                />
+              </div>
             </div>
 
             <TextField
@@ -197,7 +185,7 @@ const Contact = () => {
                   "& fieldset": {
                     borderColor: "black",
                   },
-                  height:"80px"
+                  height: "80px",
                 },
               }}
             />

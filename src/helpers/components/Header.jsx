@@ -42,6 +42,7 @@ const Header = () => {
               src="logo/ChatGPT_Image_May_7__2025__03_32_37_PM-removebg-preview 1.png"
               alt="Logo"
               className="h-12"
+              onClick={()=>navigate("/")}
             />
           </div>
 
