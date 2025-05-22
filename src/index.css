@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+}
+.poppins-medium {
+  font-family: "Fortela Typeface Regular";
+  src: local("Fortela Typeface Regular"),
+    url("FortelaTypeface-axGK9.woff") format("woff");
+}
+.digital-numbers {
+  font-family: "Digital Numbers", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+}
+

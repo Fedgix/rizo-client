@@ -1,0 +1,13 @@
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+.poppins-medium {
+  font-family: 'Volkhov';
+  src: url('../assets/fonts/volkhov-bold.woff2') format('woff2'),
+       url('../assets/fonts/volkhov-bold.woff') format('woff'),
+       url('../assets/fonts/volkhov-bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: bold;
+}
