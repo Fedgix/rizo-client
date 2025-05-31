@@ -2,6 +2,7 @@ import axiosConfig from "../axios";
 
 export const getBanner = async (query) => {
   try {
+    console.log(query, "❤️‍🩹❤️‍🩹❤️‍🩹❤️‍🩹❤️‍🩹❤️‍🩹");
     const { data } = await axiosConfig.get(`banner${query}`);
     return data;
   } catch (error) {
@@ -78,12 +79,10 @@ export const updateQuantity = async (params, body) => {
 
 export const deleteProduct = async (product, body) => {
   try {
-    console.log(body,product,"❌❌❌")
+    console.log(body, product, "❌❌❌");
     const { data } = await axiosConfig.delete(`cart/${product}`, body);
     console.log(data, "❗");
   } catch (error) {
     console.log(error);
   }
 };
-
-
