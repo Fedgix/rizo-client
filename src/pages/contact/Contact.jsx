@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import { TextField, Button, Box, Skeleton } from "@mui/material";
+import { TextField, Box, Skeleton } from "@mui/material";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
+import { contactForm } from "../../helpers/validations/validation";
 
 const Contact = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,16 +14,7 @@ const Contact = () => {
       phone: "",
       comment: "",
     },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Name is required"),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      phone: Yup.string()
-        .matches(/^[0-9]+$/, "Must be only digits")
-        .required("Phone number is required"),
-      comment: Yup.string().required("Comment is required"),
-    }),
+    validationSchema: contactForm,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: (values) => {
@@ -32,7 +23,6 @@ const Contact = () => {
   });
 
   useEffect(() => {
-    // Simulate loading delay
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -42,42 +32,31 @@ const Contact = () => {
   return (
     <div className="w-full h-screen flex flex-col justify-between">
       {isLoading ? (
-        // Skeleton layout when loading
         <div className="animate-pulse">
-          {/* Header Skeleton */}
           <Box sx={{ width: '100%', height: 80, bgcolor: '#f6f6f6' }} />
           
-          {/* Main Content Skeleton */}
           <div className="flex justify-center md:p-20">
             <div className="md:w-2/3 p-6">
-              {/* Title Skeleton */}
               <Skeleton variant="text" width={200} height={50} animation="wave" sx={{ mb: 4 }} />
               
-              {/* Form Skeleton */}
               <div className="space-y-4">
-                {/* Name/Email Row */}
                 <div className="flex flex-col md:flex-row md:gap-4 gap-3">
                   <Skeleton variant="rectangular" width="100%" height={40} animation="wave" />
                   <Skeleton variant="rectangular" width="100%" height={40} animation="wave" />
                 </div>
                 
-                {/* Phone Field */}
                 <Skeleton variant="rectangular" width="100%" height={40} animation="wave" />
                 
-                {/* Comment Field */}
                 <Skeleton variant="rectangular" width="100%" height={120} animation="wave" />
                 
-                {/* Submit Button */}
                 <Skeleton variant="rectangular" width={100} height={40} animation="wave" />
               </div>
             </div>
           </div>
           
-          {/* Footer Skeleton */}
           <Box sx={{ width: '100%', height: 200, bgcolor: '#f6f6f6' }} />
         </div>
       ) : (
-        // Actual content when loaded
         <>
           <Header />
           <div className="flex justify-center md:p-20">
@@ -225,8 +204,7 @@ const Contact = () => {
               </form>
             </div>
           </div>
-          <Footer />
-        </>
+          <Footer isLoading={isLoading} />        </>
       )}
     </div>
   );

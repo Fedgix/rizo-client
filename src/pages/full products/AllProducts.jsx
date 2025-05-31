@@ -139,8 +139,7 @@ const AllProducts = () => {
             </div>
             <div className="h-14 w-[15%] bg-[#f6f6f6]"></div>
           </div>
-          <Footer />
-        </>
+          <Footer isLoading={isLoading} />        </>
       )}
     </div>
   );

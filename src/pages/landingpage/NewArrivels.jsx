@@ -2,90 +2,78 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
+import { newArrivels } from "../../services/user/user";
 
 export const NewArrivals = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [newArriverls, setNewArrivels] = useState([]);
+  const [selectedColors, setSelectedColors] = useState({});
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
+    newArrivels(8)
+      .then((data) => {
+        setNewArrivels(data.products);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   }, []);
 
-  const products = [
-    {
-      id: 1,
-      name: "WHITE ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 5.png",
-    },
-    {
-      id: 2,
-      name: "BLACK ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 8.png",
-    },
-    {
-      id: 3,
-      name: "BLACK ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 9.png",
-    },
-    {
-      id: 4,
-      name: "WHITE ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 6.png",
-    },
-    {
-      id: 5,
-      name: "BLACK ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 10.png",
-    },
-    {
-      id: 6,
-      name: "WHITE ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 7.png",
-    },
-    {
-      id: 7,
-      name: "BLACK ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 8.png",
-    },
-    {
-      id: 8,
-      name: "WHITE ADIDAS/NIKE TEE",
-      price: "₹ 549/-",
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 12.png",
-    },
-  ];
+  const getProductImage = (product) => {
+    if (product.images && product.images.length > 0) {
+      const selectedColor = selectedColors[product.id];
+      if (selectedColor) {
+        const selectedImage = product.images.find(
+          (img) => img.color === selectedColor
+        );
+        if (selectedImage) return selectedImage.imageUrl;
+      }
+      return product.images[0].imageUrl;
+    }
+    return product.defaultImage || product.thumbnailImage;
+  };
+
+
 
   if (isLoading) {
     return (
       <div className="w-full md:py-16 bg-white border-none animate-pulse">
         {/* Header section skeleton */}
         <div className="text-center mb-8">
-          <Skeleton variant="text" width={200} height={50} animation="wave" sx={{ mx: 'auto' }} />
+          <Skeleton
+            variant="text"
+            width={200}
+            height={50}
+            animation="wave"
+            sx={{ mx: "auto" }}
+          />
           <div className="flex w-full justify-center items-center">
-            <Skeleton 
-              variant="text" 
-              width="33%" 
-              height={30} 
-              animation="wave" 
-              sx={{ mx: 'auto', my: 2 }}
+            <Skeleton
+              variant="text"
+              width="33%"
+              height={30}
+              animation="wave"
+              sx={{ mx: "auto", my: 2 }}
             />
           </div>
-          
+
           {/* Button group skeleton */}
           <div className="flex justify-center gap-4 mb-12">
-            <Skeleton variant="rounded" width={120} height={40} animation="wave" />
-            <Skeleton variant="rounded" width={120} height={40} animation="wave" />
+            <Skeleton
+              variant="rounded"
+              width={120}
+              height={40}
+              animation="wave"
+            />
+            <Skeleton
+              variant="rounded"
+              width={120}
+              height={40}
+              animation="wave"
+            />
           </div>
         </div>
 
@@ -98,7 +86,7 @@ export const NewArrivals = () => {
                 width="100%"
                 height={200}
                 animation="wave"
-                sx={{ borderRadius: '6px', mb: 2 }}
+                sx={{ borderRadius: "6px", mb: 2 }}
               />
               <Skeleton width="80%" animation="wave" />
               <Skeleton width="60%" animation="wave" />
@@ -108,7 +96,12 @@ export const NewArrivals = () => {
 
         {/* See more button skeleton */}
         <div className="flex justify-center mt-12">
-          <Skeleton variant="rounded" width={120} height={40} animation="wave" />
+          <Skeleton
+            variant="rounded"
+            width={120}
+            height={40}
+            animation="wave"
+          />
         </div>
       </div>
     );
@@ -126,42 +119,70 @@ export const NewArrivals = () => {
             to fresh fits—just landed.
           </p>
         </div>
-
-        <div className="flex justify-center gap-4 mb-12">
-          <button className="bg-black text-white hover:bg-black/90 rounded-lg px-7 py-2.5 text-xs font-medium">
-            SHOP NOW
-          </button>
-          <button className="bg-gray-200 text-gray-700 hover:bg-gray-300 border-0 rounded-lg px-7 py-2.5 text-xs font-medium">
-            VIEW MORE
-          </button>
-        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        {products.map((product) => (
-          <div key={product.id} className="flex flex-col items-center">
-            <div
-              className="mb-3 rounded-md"
-              onClick={() => navigate("/product")}
-            >
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8 w-full max-w-6xl mx-auto px-4">
+        {newArriverls.map((product) => (
+          <div
+            key={product.id}
+            onClick={() => navigate(`/product?id=${product.id}`)}
+            className="flex flex-col items-center group relative cursor-pointer"
+          >
+            <div className="mb-3  overflow-hidden relative w-full">
               <img
-                src={product.image}
+                src={getProductImage(product)}
                 alt={product.name}
-                className="object-contain w-68 h-68"
+                className="object-cover w-full h-64 md:h-80 transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
               />
+              {product.salesCount > 100 && (
+                <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                  Popular
+                </div>
+              )}
             </div>
-            <h3 className="text-xs font-medium">{product.name}</h3>
-            <p className="text-xs">{product.price}</p>
+
+            <div className="w-full px-2">
+              <h3 className="text-sm font-medium mb-1 text-left">
+                {product.name}
+              </h3>
+              <p className="text-sm font-bold mb-2 text-left">
+                ₹ {product.basePrice.toFixed(2)}
+              </p>
+
+              {product.availableColors && product.availableColors.length > 1 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {product.availableColors.map((colorObj, index) => (
+                    <button
+                      key={`${product.id}-${colorObj.color}-${index}`}
+                      className={`w-5 h-2  border ${
+                        selectedColors[product.id] === colorObj.color
+                          ? "ring-2 ring-offset-1 ring-gray-400"
+                          : ""
+                      }`}
+                      style={{
+                        backgroundColor: colorObj.colorCode,
+                      }}
+                      // onClick={(e) => {
+                      //   e.stopPropagation();
+                      //   handleColorSelect(product.id, colorObj.color);
+                      // }}
+                      title={colorObj.color}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
       <div className="flex justify-center mt-12">
-        <button 
-          onClick={() => navigate("/products")}
+        <button
+          onClick={() => navigate("/shop")}
           className="bg-black text-white shadow-xl hover:bg-black/90 rounded-lg px-7 py-2.5 text-xs font-medium"
         >
-          SEE MORE
+          SHOP NOW
         </button>
       </div>
     </div>

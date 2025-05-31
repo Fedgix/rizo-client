@@ -1,35 +1,37 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
+import { newArrivels } from "../../services/user/user";
+import { useNavigate } from "react-router-dom";
 
 export const BestSeller = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  const [bestSellers, setBestSellers] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
+    newArrivels(3)
+      .then((data) => {
+        setBestSellers(data.products);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   }, []);
-
-  const products = [
-    {
-      id: 1,
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 5.png",
-      alt: "new arrivels",
-    },
-    {
-      id: 2,
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 8.png",
-      alt: "new arrivels",
-    },
-    {
-      id: 3,
-      image: "new arrivels/Screenshot 2025-05-01 at 5.50.02 PM 6.png",
-      alt: "White t-shirt with abstract design",
-    },
-  ];
+  const getProductImage = (product) => {
+    if (product.images && product.images.length > 0) {
+      const selectedColor = selectedColors[product.id];
+      if (selectedColor) {
+        const selectedImage = product.images.find(
+          (img) => img.color === selectedColor
+        );
+        if (selectedImage) return selectedImage.imageUrl;
+      }
+      return product.images[0].imageUrl;
+    }
+    return product.defaultImage || product.thumbnailImage;
+  };
 
   return (
     <div className="flex-col justify-center w-full mt-10 bg-white px-4 py-7 md:py-12">
@@ -40,16 +42,23 @@ export const BestSeller = () => {
           <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
             <Skeleton variant="text" width={200} height={40} animation="wave" />
           </Box>
-          
+
           {/* Description Skeleton */}
           <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
             <Skeleton variant="text" width="60%" height={20} animation="wave" />
           </Box>
-          
+
           {/* Products Grid Skeleton */}
           <div className="flex justify-center md:gap-8 my-12">
             {[...Array(3)].map((_, index) => (
-              <Box key={index} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
                 <Skeleton
                   variant="rectangular"
                   width={200}
@@ -60,10 +69,15 @@ export const BestSeller = () => {
               </Box>
             ))}
           </div>
-          
+
           {/* Button Skeleton */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <Skeleton variant="rectangular" width={120} height={40} animation="wave" />
+            <Skeleton
+              variant="rectangular"
+              width={120}
+              height={40}
+              animation="wave"
+            />
           </Box>
         </div>
       ) : (
@@ -81,15 +95,34 @@ export const BestSeller = () => {
             </div>
           </div>
 
-          <div className="flex justify-center md:gap-8 my-12">
-            {products.map((product) => (
-              <div key={product.id} className="flex flex-col items-center">
-                <div className="mb-3 ">
+          <div className="flex flex-wrap justify-center gap-6 my-12">
+            {bestSellers.map((product) => (
+              <div
+                key={product.id}
+                onClick={() => navigate(`/product?id=${product.id}`)}
+                className="flex flex-col items-center group relative cursor-pointer md:w-[300px] w-full"
+              >
+                <div className="mb-3 overflow-hidden relative w-full h-[320px]">
                   <img
-                    src={product.image}
-                    alt={product.alt}
-                    className="object-contain "
+                    src={getProductImage(product)}
+                    alt={product.name}
+                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
                   />
+                  {product.salesCount > 100 && (
+                    <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                      Popular
+                    </div>
+                  )}
+                </div>
+
+                <div className="w-full px-2">
+                  <h3 className="text-sm font-medium mb-1 text-left">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm font-bold mb-2 text-left">
+                    ₹ {product.basePrice.toFixed(2)}
+                  </p>
                 </div>
               </div>
             ))}

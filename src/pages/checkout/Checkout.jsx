@@ -18,14 +18,12 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate loading delay
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Get all Indian states
   const indianStates = State.getStatesOfCountry("IN").map((state) => ({
     value: state.isoCode,
     label: state.name,
@@ -49,7 +47,7 @@ const Checkout = () => {
         JSON.stringify(
           {
             ...values,
-            state: values.state.label, // Include state name in submission
+            state: values.state.label,
           },
           null,
           2
@@ -65,7 +63,6 @@ const Checkout = () => {
         <div className="flex justify-center p-2 md:p-20 animate-pulse">
           <div className="w-full md:p-6 rounded-lg">
             <div className="md:space-y-4 space-y-9 md:gap-4 md:flex">
-              {/* Shipping Information Skeleton */}
               <div className="md:w-1/2 w-full space-y-3 md:px-5 px-2">
                 <Skeleton
                   variant="text"
@@ -74,7 +71,6 @@ const Checkout = () => {
                   animation="wave"
                 />
 
-                {/* Name Fields */}
                 <div className="flex gap-2">
                   <Skeleton
                     variant="rectangular"
@@ -90,7 +86,6 @@ const Checkout = () => {
                   />
                 </div>
 
-                {/* Address Fields */}
                 <Skeleton
                   variant="rectangular"
                   width="100%"
@@ -104,7 +99,6 @@ const Checkout = () => {
                   animation="wave"
                 />
 
-                {/* City/State/Pincode */}
                 <div className="flex gap-2">
                   <Skeleton
                     variant="rectangular"
@@ -126,7 +120,6 @@ const Checkout = () => {
                   />
                 </div>
 
-                {/* Phone Number */}
                 <Skeleton
                   variant="rectangular"
                   width="100%"
@@ -134,7 +127,6 @@ const Checkout = () => {
                   animation="wave"
                 />
 
-                {/* Save Info Checkbox */}
                 <div className="flex items-center gap-2">
                   <Skeleton
                     variant="rectangular"
@@ -151,11 +143,9 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Order Summary Skeleton */}
               <div className="md:w-1/2 md:border-l-[2px] md:hidden-border-t-[2px] md:py-0 py-4 border-gray-100">
                 <div className="md:px-7 px-2">
                   <div className="md:space-y-8 space-y-3">
-                    {/* Product Skeleton */}
                     <div className="flex justify-between items-center py-2">
                       <div className="flex items-center gap-3">
                         <Skeleton
@@ -187,7 +177,6 @@ const Checkout = () => {
                       />
                     </div>
 
-                    {/* Discount Code Skeleton */}
                     <div className="pb-4 w-full">
                       <div className="flex gap-2">
                         <Skeleton
@@ -205,7 +194,6 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* Order Details Skeleton */}
                     <div className="space-y-3 pb-4">
                       {[...Array(3)].map((_, i) => (
                         <div key={i} className="flex justify-between">
@@ -247,7 +235,6 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* Payment Section Skeleton */}
                     <div className="space-y-2">
                       <Skeleton
                         variant="text"
@@ -313,7 +300,6 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* Pay Now Button Skeleton */}
                     <div className="pt-4">
                       <Skeleton
                         variant="rectangular"
@@ -477,7 +463,6 @@ const Checkout = () => {
                   />
 
                   <div className="flex gap-2">
-                    {/* City */}
                     <div className="w-1/3">
                       <TextField
                         fullWidth
@@ -515,7 +500,6 @@ const Checkout = () => {
                       />
                     </div>
 
-                    {/* State */}
                     <div className="w-1/3">
                       <Select
                         id="state"
@@ -566,8 +550,8 @@ const Checkout = () => {
                             overflowY: "auto",
                             fontSize: "0.75rm",
 
-                            scrollbarWidth: "none", // for Firefox
-                            msOverflowStyle: "none", // for Internet Explorer
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
                           }),
                           menuList: (provided) => ({
                             ...provided,
@@ -575,10 +559,10 @@ const Checkout = () => {
                             maxHeight: "150px",
                             overflowY: "auto",
                             paddingRight: "5px",
-                            scrollbarWidth: "none", // Firefox
-                            msOverflowStyle: "none", // IE 10+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
                             "::-webkit-scrollbar": {
-                              display: "none", // Chrome, Safari, Opera
+                              display: "none",
                             },
                           }),
                           option: (provided, state) => ({
@@ -609,7 +593,6 @@ const Checkout = () => {
                       )}
                     </div>
 
-                    {/* Pincode */}
                     <div className="w-1/3">
                       <TextField
                         fullWidth
@@ -698,7 +681,6 @@ const Checkout = () => {
                 <div className="md:w-1/2 md:border-l-[2px] md:hidden-border-t-[2px] md:py-0 py-4 border-gray-100">
                   <div className="md:px-7 px-2">
                     <div className="md:space-y-8 space-y-3">
-                      {/* Order Summary */}
                       <div className=" ">
                         <div className="flex justify-between items-center py-2">
                           <div className="flex items-center gap-3">
@@ -725,7 +707,6 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      {/* Discount Code */}
                       <div className=" pb-4   w-full">
                         <div className="flex gap-2 ">
                           <Input
@@ -744,7 +725,6 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      {/* Order Details */}
                       <div className="space-y-3  font-semibold  pb-4">
                         <div className="flex justify-between text-sm">
                           <span> Subtotal</span>
@@ -767,7 +747,6 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      {/* Payment Section */}
                       <div className="space-y-2">
                         <h2 className="font-semibold  text-xl ">Payment</h2>
                         <p className="text-xs text-gray-500">
@@ -825,31 +804,6 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      {/* Billing Address */}
-                      {/* <div className="space-y-4">
-                    <h2 className="font-medium">Billing address</h2>
-
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="same-address"
-                        checked={sameAsShipping}
-                        onCheckedChange={(checked) =>
-                          setSameAsShipping(checked === true)
-                        }
-                      />
-                      <label htmlFor="same-address" className="text-sm">
-                        Same as shipping address
-                      </label>
-                    </div>
-
-                    {!sameAsShipping && (
-                      <button variant="outline" size="sm" className="text-sm">
-                        Use a different billing address
-                      </button>
-                    )}
-                  </div> */}
-
-                      {/* Pay Now Button */}
                       <div className="pt-4">
                         <button
                           onClick={() => navigate("/order")}
@@ -864,7 +818,7 @@ const Checkout = () => {
               </form>
             </div>
           </div>
-          <Footer />
+          <Footer isLoading={isLoading} />{" "}
         </>
       )}
     </div>

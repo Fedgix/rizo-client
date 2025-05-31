@@ -8,6 +8,9 @@ import Contact from "../pages/contact/Contact";
 import Cart from "../pages/cart/Cart";
 import Checkout from "../pages/checkout/Checkout";
 import Order from "../pages/order/Order";
+import About from "../pages/about/About";
+import Login from "../pages/auth/Login";
+import { LoginPage } from "../helpers/components/Ex";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +23,8 @@ const AppRoutes = () => {
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/order" element={<Order />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/login" element={<Login />} />
     </Routes>
   );
 };

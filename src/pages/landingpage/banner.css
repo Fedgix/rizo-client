@@ -1,0 +1,31 @@
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .dot.slick-active {
+    background-color: #000;
+    width: 20px;
+    border-radius: 5px;
+  }
+
+  /* Add this to your CSS file */
+.slick-slide {
+    transition: all 0.3s ease;
+  }
+  
+  .slick-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .slick-list {
+    overflow: hidden;
+  }

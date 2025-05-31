@@ -11,31 +11,45 @@ import SocialMedia from "./SocialMedia";
 import Footer from "../../helpers/components/Footer";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
+import { getBanner } from "../../services/user/user";
 
 const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  const [banners, setBanners] = useState([]);
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
+
+  }, []);
+
+  useEffect(() => {
+    getBanner("?location=title")
+      .then((data) => {
+        setBanners(data.data);
+        setIsLoading(false);
+
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   const settings = {
-    dots: true,
-    infinite: true,
+    dots: banners.length > 1,
+    infinite: banners.length > 1,
     speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: banners.length > 1,
     autoplaySpeed: 3000,
     arrows: false,
+    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+    fade: true,
+    waitForAnimate: true,
+    initialSlide: 0,
+    swipe: true,
+    touchThreshold: 10,
+    edgeFriction: 0.35,
     appendDots: (dots) => (
-      <div>
-        <ul className="flex justify-center gap-2 mt-4">{dots}</ul>
+      <div style={{ position: "absolute", bottom: "10px", width: "100%" }}>
+        <ul className="flex justify-center gap-2">{dots}</ul>
       </div>
     ),
     customPaging: () => <div className="dot"></div>,
@@ -44,18 +58,10 @@ const LandingPage = () => {
   return (
     <div className="w-full h-full">
       {isLoading ? (
-        // Skeleton layout when loading
         <div className="animate-pulse">
-          {/* Header Skeleton */}
           <Box sx={{ width: "100%", height: 80, bgcolor: "#f6f6f6" }} />
-
-          {/* Slider Skeleton */}
           <Box sx={{ width: "100%", height: 400, bgcolor: "#e0e0e0" }} />
-
-          {/* Spacer */}
           <Box sx={{ width: "100%", height: 20, bgcolor: "#f6f6f6", my: 2 }} />
-
-          {/* Landing Category Skeleton */}
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <Skeleton variant="text" width={300} height={40} animation="wave" />
           </Box>
@@ -73,10 +79,8 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Vether Banner Skeleton */}
           <Box sx={{ width: "100%", height: 200, bgcolor: "#e0e0e0", my: 4 }} />
 
-          {/* New Arrivals Skeleton */}
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <Skeleton variant="text" width={300} height={40} animation="wave" />
           </Box>
@@ -95,7 +99,6 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Best Seller Skeleton */}
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <Skeleton variant="text" width={300} height={40} animation="wave" />
           </Box>
@@ -114,7 +117,6 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Social Media Skeleton */}
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <Skeleton variant="text" width={300} height={40} animation="wave" />
           </Box>
@@ -131,57 +133,58 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Footer Skeleton */}
           <Box sx={{ width: "100%", height: 200, bgcolor: "#f6f6f6", mt: 4 }} />
         </div>
       ) : (
-        // Actual content when loaded
         <>
           <Header />
-          <Slider {...settings}>
-            <img
-              src="/banner/Rizo Banner 1.png"
-              alt="Banner 1"
-              className="w-full "
-            />
-            <img
-              src="/banner/Rizo Banner 1.png"
-              alt="Banner 2"
-              className="w-full"
-            />
-            <img
-              src="/banner/Rizo Banner 1.png"
-              alt="Banner 3"
-              className="w-full"
-            />
-          </Slider>
+          <div className="relative">
+            <Slider {...settings}>
+              {banners.map((item, index) => (
+                <div key={index} className="w-full">
+                  <img
+                    src={item.imageUrl}
+                    alt={`Banner ${index + 1}`}
+                    className="w-full  object-fit transition-all duration-500 object-fit md:h-[500px] h-[300px]"
+                  />
+                </div>
+              ))}
+            </Slider>
+          </div>
 
           <style>
             {`
-              /* Inactive dot (gray) */
-              .dot {
-                width: 8px;
-                height: 8px;
-                background-color: #a0a0a0;
-                border-radius: 50%;
-              }
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #a0a0a0;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
 
-              /* Active dot - creates the wrapper effect via padding + border */
-              .slick-dots li.slick-active .dot {
-                background-color: #000;
-                padding: 4px; /* creates space between dot and border */
-                border: 1px solid #000;
-                border-radius: 50%;
-              }
-            `}
+    .slick-dots li.slick-active .dot {
+      background-color: #000;
+      transform: scale(1.3);
+    }
+
+    .slick-dots {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      text-align: center;
+      z-index: 10;
+    }
+  `}
           </style>
-
           <LandingCategory />
           <VetherBanner />
           <NewArrivals />
           <BestSeller />
           <SocialMedia />
-          <Footer />
+          <Footer isLoading={isLoading} />
         </>
       )}
     </div>

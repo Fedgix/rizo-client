@@ -8,14 +8,12 @@ const Order = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // This would typically come from an API or state management
   const orderItems = [
     {
       id: "1",
@@ -28,9 +26,7 @@ const Order = () => {
   ];
 
   const handleTrackOrder = (orderId) => {
-    // Implement order tracking functionality
     console.log(`Tracking order: ${orderId}`);
-    // This would typically open a modal or navigate to a tracking page
   };
 
   return (
@@ -38,7 +34,6 @@ const Order = () => {
       <Header isLoading={isLoading} />
       {isLoading ? (
         <div className="py-20 h-screen animate-pulse">
-          {/* Header Skeleton */}
           <div className="border-b-[2px] border-gray-100 w-full rounded-md overflow-hidden">
             <div className="grid grid-cols-2 md:px-20 px-4 border-b">
               <Box sx={{ py: 3, md: { px: 4 }, px: 4 }}>
@@ -49,7 +44,6 @@ const Order = () => {
               </Box>
             </div>
 
-            {/* Order Item Skeleton */}
             <div className="grid md:px-20 px-5 grid-cols-2 border-b-[2px] border-gray-100">
               <div className="py-7 flex items-center gap-2">
                 <Box sx={{ width: 64, height: 64, bgcolor: '#f6f6f6', borderRadius: 1 }} />
@@ -76,7 +70,6 @@ const Order = () => {
         <>
           <div className="py-20 h-screen">
             <div className="border-b-[2px] border-gray-100 w-full rounded-md overflow-hidden">
-              {/* Header */}
               <div className="grid grid-cols-2 md:px-20 px-4 border-b">
                 <div className="py-3 md:px-4 text-xs font-semibold text-gray-400 uppercase">
                   Product
@@ -86,7 +79,6 @@ const Order = () => {
                 </div>
               </div>
 
-              {/* Order Items */}
               {orderItems.map((item) => (
                 <div
                   key={item.id}
@@ -135,8 +127,7 @@ const Order = () => {
               </div>
             )}
           </div>
-          <Footer />
-        </>
+          <Footer isLoading={isLoading} />        </>
       )}
     </div>
   );

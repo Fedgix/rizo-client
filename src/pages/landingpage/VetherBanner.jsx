@@ -4,107 +4,118 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
-
-const banners = [
-  {
-    title: "HZO HOODIES",
-    subtitle: "Fresh for Summer",
-    description: [
-      "Fresh styles for the sun-soaked days ahead.",
-      "Discover lightweight fabrics and vibrant designs.",
-      "Stay comfortable and stylish all summer long.",
-    ],
-    buttonText: "Explore More",
-    image: "banner/image (17).png",
-  },
-  {
-    title: "WINTER COLLECTION",
-    subtitle: "Cozy for Cold Days",
-    description: [
-      "Warm styles for the chilly winter days.",
-      "Discover cozy fabrics and comfortable designs.",
-      "Stay warm and fashionable all winter long.",
-    ],
-    buttonText: "Shop Now",
-    image: "banner/image (17).png",
-  },
-];
+import { getBanner } from "../../services/user/user";
+import { useNavigate } from "react-router-dom";
 
 const VetherBanner = () => {
   const [sliderRef, setSliderRef] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [banners, setBanner] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
-    // Simulate loading delay
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    getBanner("?location=season")
+      .then((data) => {
+        setBanner(data.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
+    infinite: banners.length > 1,
+    speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: false,
-    centerMode: true,
-    centerPadding: "0px",
-    focusOnSelect: true,
-    autoplay: true,
+    autoplay: banners.length > 1,
     autoplaySpeed: 3000,
+    arrows: false,
+    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+    fade: true,
+    waitForAnimate: true,
+    initialSlide: 0,
+    swipe: true,
+    touchThreshold: 10,
+    edgeFriction: 0.35,
+    appendDots: (dots) => (
+      <div style={{ position: "absolute", bottom: "10px", width: "100%" }}>
+        <ul className="flex justify-center gap-2">{dots}</ul>
+      </div>
+    ),
+    customPaging: () => <div className="dot"></div>,
   };
 
   if (isLoading) {
     return (
       <div className="relative w-full py-10 animate-pulse">
-        {/* Banner Skeleton */}
         <div className="px-4">
           <div className="flex flex-col bg-[#f6f6f6] md:flex-row items-center rounded-lg overflow-hidden shadow-lg">
-            {/* Image Skeleton */}
             <div className="md:w-1/2 h-64 md:h-96">
-              <Skeleton 
-                variant="rectangular" 
-                width="100%" 
-                height="100%" 
-                animation="wave" 
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height="100%"
+                animation="wave"
               />
             </div>
-            
-            {/* Content Skeleton */}
+
             <div className="md:w-1/2 p-8 md:p-12">
-              <Skeleton variant="text" width="60%" height={40} animation="wave" />
-              <Skeleton variant="text" width="40%" height={30} animation="wave" sx={{ mt: 1 }} />
-              
+              <Skeleton
+                variant="text"
+                width="60%"
+                height={40}
+                animation="wave"
+              />
+              <Skeleton
+                variant="text"
+                width="40%"
+                height={30}
+                animation="wave"
+                sx={{ mt: 1 }}
+              />
+
               <div className="mb-6">
                 {[...Array(3)].map((_, i) => (
-                  <Skeleton 
-                    key={i} 
-                    variant="text" 
-                    width="100%" 
-                    height={20} 
-                    animation="wave" 
-                    sx={{ mt: 1 }} 
+                  <Skeleton
+                    key={i}
+                    variant="text"
+                    width="100%"
+                    height={20}
+                    animation="wave"
+                    sx={{ mt: 1 }}
                   />
                 ))}
               </div>
-              
-              <Skeleton 
-                variant="rectangular" 
-                width={120} 
-                height={40} 
-                animation="wave" 
-                sx={{ borderRadius: '4px' }} 
+
+              <Skeleton
+                variant="rectangular"
+                width={120}
+                height={40}
+                animation="wave"
+                sx={{ borderRadius: "4px" }}
               />
             </div>
           </div>
         </div>
 
-        {/* Navigation Buttons Skeleton */}
         <div className="flex justify-center mt-6 space-x-2">
-          <Skeleton variant="circular" width={32} height={32} animation="wave" />
-          <Skeleton variant="circular" width={32} height={32} animation="wave" />
+          <Skeleton
+            variant="circular"
+            width={32}
+            height={32}
+            animation="wave"
+          />
+          <Skeleton
+            variant="circular"
+            width={32}
+            height={32}
+            animation="wave"
+          />
         </div>
       </div>
     );
@@ -115,30 +126,31 @@ const VetherBanner = () => {
       <Slider ref={setSliderRef} {...settings}>
         {banners.map((banner, index) => (
           <div key={index} className="px-4">
-            <div className="flex flex-col bg-[#dadada] md:flex-row items-center rounded-lg overflow-hidden shadow-lg">
-              <div className="md:w-1/2 h-64 md:h-96">
+            <div className="flex flex-col w-full bg-[#dadada] md:flex-row items-center rounded-lg overflow-hidden shadow-lg">
+              <div className="md:w-1/2 slick-slide h-64 md:h-96">
                 <img
-                  src={banner.image}
-                  alt={banner.title}
-                  className="w-full h-full object-fit"
+                  src={banner.imageUrl}
+                  alt={banner.subtitle}
+                  className="w-full object-fit transition-all duration-500 md:h-[400px] h-[300px]"
                 />
               </div>
               <div className="md:w-1/2 p-8 md:p-12">
                 <h2 className="text-base md:text-4xl font-bold mb-2">
                   {banner.title}
                 </h2>
-                <h3 className="text-sm md:text-2xl text-gray-600 mb-4">
+                <h3 className="text-sm md:text-base text-gray-600 mb-4">
                   {banner.subtitle}
                 </h3>
                 <div className="mb-6">
-                  {banner.description.map((line, i) => (
-                    <p key={i} className="text-gray-700 mb-2 md:text-base text-xs">
-                      {line}
-                    </p>
-                  ))}
+                  <p className="text-gray-700 mb-2 md:text-sm text-xs">
+                    {banner.description}
+                  </p>
                 </div>
-                <button className="bg-black text-white py-2 px-6 md:text-base text-xs rounded-md hover:bg-gray-800 transition">
-                  {banner.buttonText}
+                <button
+                  onClick={() => navigate(banner.ctaLink)}
+                  className="bg-black text-white py-2 px-6  text-xs rounded-md hover:bg-gray-800 transition"
+                >
+                  SHOP NOW
                 </button>
               </div>
             </div>
