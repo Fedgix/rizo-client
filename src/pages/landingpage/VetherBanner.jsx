@@ -22,6 +22,8 @@ const VetherBanner = () => {
   useEffect(() => {
     getBanner("?location=season")
       .then((data) => {
+        console.log(data,"😀😀😀😀");
+
         setBanner(data.data);
       })
       .catch((err) => console.log(err));
@@ -35,7 +37,7 @@ const VetherBanner = () => {
     autoplay: banners.length > 1,
     autoplaySpeed: 3000,
     arrows: false,
-    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+    cssEase: "cubic-bezier(0.645, 0.045, 0.355, 1)",
     fade: true,
     waitForAnimate: true,
     initialSlide: 0,
