@@ -23,7 +23,7 @@ const Shop = () => {
   const categoryFromRoute = searchParams.get("category");
   const [filters, setFilters] = useState({
     gender: null,
-    category: categoryFromRoute || "null",
+    category: categoryFromRoute || "all",
     season: null,
     size: null,
     minPrice: "",
@@ -131,7 +131,7 @@ const Shop = () => {
   const clearFilters = useCallback(() => {
     setFilters({
       gender: null,
-      category: categoryFromRoute || null,
+      category: categoryFromRoute || "all",
       season: null,
       size: null,
       minPrice: "",

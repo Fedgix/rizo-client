@@ -2,7 +2,6 @@ import axiosConfig from "../axios";
 
 export const getBanner = async (query) => {
   try {
-    console.log(query, "❤️‍🩹❤️‍🩹❤️‍🩹❤️‍🩹❤️‍🩹❤️‍🩹");
     const { data } = await axiosConfig.get(`banner${query}`);
     return data;
   } catch (error) {

@@ -18,6 +18,7 @@ export default function Cart() {
   const [isLoading, setIsLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
 
+  
   useEffect(() => {
     getCart()
       .then((data) => {

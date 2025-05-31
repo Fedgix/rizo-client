@@ -52,8 +52,9 @@ const Header = ({ isLoading = false }) => {
 
   const handleSignup = async () => {
     try {
-      const { data } = await login();
-    
+  
+
+      const { data } = await login(  window.location.pathname);
       window.location.href = data.authUrl;
       setIsLoggedIn(true);
       setIsUserMenuOpen(false);

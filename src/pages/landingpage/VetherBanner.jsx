@@ -22,8 +22,6 @@ const VetherBanner = () => {
   useEffect(() => {
     getBanner("?location=season")
       .then((data) => {
-        console.log(data,"😀😀😀😀");
-
         setBanner(data.data);
       })
       .catch((err) => console.log(err));
