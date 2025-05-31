@@ -56,6 +56,8 @@ const Header = ({ isLoading = false }) => {
 
       const { data } = await login(  window.location.pathname);
       window.location.href = data.authUrl;
+
+      const dkfj = JSON(atob)
       setIsLoggedIn(true);
       setIsUserMenuOpen(false);
     } catch (error) {
