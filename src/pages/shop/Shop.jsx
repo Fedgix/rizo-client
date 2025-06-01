@@ -7,7 +7,6 @@ import { getProducts } from "../../services/user/user";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ProductGrid from "./ProductGrid";
-import { useAsync } from "react-select/async";
 
 const Shop = () => {
   const [isLoading, setIsLoading] = useState(true);

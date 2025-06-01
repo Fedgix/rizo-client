@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
@@ -13,6 +13,8 @@ import {
 import "react-inner-image-zoom/lib/styles.min.css";
 import InnerImageZoom from "react-inner-image-zoom";
 import { Toast, ToastToggle } from "flowbite-react";
+import Cookies from "js-cookie";
+import { UserContext } from "../../helpers/custom/UserContext";
 
 const Product = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +30,8 @@ const Product = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
+  const [userData, setUserData] = useState(Cookies.get("rizoUser"));
+  const { setRequireLogin } = useContext(UserContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -323,6 +327,11 @@ const Product = () => {
 
   const addCart = async () => {
     try {
+      if (!userData) {
+        setRequireLogin(true);
+        return null;
+      }
+
       const variant = getCurrentVariant();
       if (!variant) {
         setToastMessage("Please select a variant");
@@ -332,7 +341,6 @@ const Product = () => {
       }
 
       const payload = {
-        userId: "6836fd29c1c36dcec69b99b6",
         quantity,
         variantId: variant._id,
         productId: id,
@@ -573,7 +581,10 @@ const Product = () => {
             <div
               key={product.id}
               className="flex flex-col items-center cursor-pointer group"
-              onClick={() => navigate(`/product?id=${product.id}`)}
+              onClick={() => {
+                navigate(`/product?id=${product.id}`);
+                window.scrollTo(0, 0);
+              }}
             >
               <div className="mb-2 rounded-md overflow-hidden w-full aspect-square">
                 <img

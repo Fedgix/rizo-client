@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import Cookies from "js-cookie";
 import {
   FiMenu,
   FiSearch,
@@ -7,18 +8,88 @@ import {
   FiX,
   FiLogOut,
 } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { AiOutlineGoogle } from "react-icons/ai";
-import { login } from "../../services/auth/auth";
+import { login, logout } from "../../services/auth/auth";
+import { UserContext } from "../custom/UserContext";
 
 const Header = ({ isLoading = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [userData, setUserData] = useState(() => {
+    const cookie = Cookies.get("rizoUser");
+    return cookie ? JSON.parse(cookie) : null;
+  });
+  const { requireLogin, setRequireLogin } = useContext(UserContext);
+  const [isMobile, setIsMobile] = useState(false);
+  const userMenuRef = useRef(null);
+
+  // Check screen size on mount and resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle automatic opening and shaking
+  useEffect(() => {
+    if (requireLogin && !userData) {
+      if (isMobile) {
+        setIsMenuOpen(true);
+      } else {
+        setIsUserMenuOpen(true);
+      }
+
+      const timer = setTimeout(() => {
+        setRequireLogin(false);
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [requireLogin, userData, setRequireLogin, isMobile]);
+
+  useEffect(() => {
+    const encodedUser = searchParams.get("user");
+    if (encodedUser) {
+      const user = JSON.parse(atob(encodedUser));
+      Cookies.set("rizoUser", JSON.stringify(user));
+      setUserData(user);
+    }
+  }, [searchParams]);
+
+  const shakeVariants = {
+    shake: {
+      x: [0, -10, 10, -10, 10, -5, 5, 0],
+      transition: {
+        duration: 0.2,
+        repeat: 1,
+        repeatType: "mirror",
+      },
+    },
+    idle: {
+      x: 0,
+    },
+  };
 
   const menuVariants = {
     hidden: { x: "100%" },
@@ -48,26 +119,39 @@ const Header = ({ isLoading = false }) => {
     hidden: { opacity: 0, y: -10 },
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
+    shake: {
+      x: [0, -10, 10, -10, 10, -5, 5, 0],
+      transition: {
+        duration: 0.2,
+        repeat: 0.5, // Will shake for 0.5s * 8 = 4s total
+        repeatType: "mirror",
+      },
+    },
   };
 
   const handleSignup = async () => {
     try {
-  
-
-      const { data } = await login(  window.location.pathname);
+      const { data } = await login(window.location.pathname);
       window.location.href = data.authUrl;
-
-      const dkfj = JSON(atob)
       setIsLoggedIn(true);
       setIsUserMenuOpen(false);
+      setIsMenuOpen(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setIsUserMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      Cookies.remove("rizoUser");
+      setUserData(null);
+      setIsUserMenuOpen(false);
+      setIsMenuOpen(false);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (isLoading) {
@@ -128,7 +212,7 @@ const Header = ({ isLoading = false }) => {
             <img
               src="logo/ChatGPT_Image_May_7__2025__03_32_37_PM-removebg-preview 1.png"
               alt="Logo"
-              className="h-12"
+              className="h-12 cursor-pointer"
               onClick={() => navigate("/")}
             />
           </div>
@@ -171,21 +255,28 @@ const Header = ({ isLoading = false }) => {
               <FiSearch size={16} />
             </button>
 
-            {/* Cart Icon - hidden only on /cart route */}
             {!window.location.pathname.includes("/cart") && (
               <button
                 className="p-1 text-[#484848] hover:text-black transition-colors"
-                onClick={() => navigate("/cart")}
+                onClick={() => {
+                  if (!userData) {
+                    setRequireLogin(true);
+                  } else {
+                    navigate("/cart");
+                  }
+                }}
               >
                 <FiShoppingBag size={16} />
               </button>
             )}
 
-            {/* User Icon with Dropdown (Desktop) */}
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block" ref={userMenuRef}>
               <button
                 className="p-1 text-[#484848] hover:text-black transition-colors"
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                onClick={() => {
+                  setIsUserMenuOpen(!isUserMenuOpen);
+                  setRequireLogin(false);
+                }}
               >
                 <FiUser size={16} />
               </button>
@@ -195,44 +286,55 @@ const Header = ({ isLoading = false }) => {
                   <motion.div
                     variants={userMenuVariants}
                     initial="hidden"
-                    animate="visible"
+                    animate={
+                      requireLogin && !userData
+                        ? ["visible", "shake"]
+                        : "visible"
+                    }
                     exit="exit"
-                    transition={{ duration: 0.2 }}
-                    className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 ${
-                      !isLoggedIn
-                        ? "h-auto flex justify-center items-center"
-                        : "h-20 flex flex-col"
-                    }`}
+                    className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 p-3"
                   >
-                    {!isLoggedIn ? (
+                    {!userData ? (
                       <button
                         onClick={handleSignup}
-                        className=" w-full flex  justify-center items-center gap-2 bg-black rounded-md text-white font-sm h-10 text-center px-4 py-2 text-sm"
+                        className="w-full flex justify-center items-center gap-2 bg-black rounded-md text-white font-medium h-10 px-4 py-2 text-sm"
                       >
                         <AiOutlineGoogle />
-                        Signin with Google
+                        Sign in with Google
                       </button>
                     ) : (
-                      <>
-                        <div className="px-4 py-2 text-sm text-gray-700">
-                          Hello
+                      <div className="flex flex-col space-y-3">
+                        <div className="flex items-center gap-3">
+                          {userData?.avatar && (
+                            <img
+                              src={userData.avatar}
+                              alt="avatar"
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          )}
+                          <div>
+                            <div className="text-[#484848] font-semibold text-sm">
+                              Hello {userData.name}
+                            </div>
+                            <div className="text-[#484848] text-xs">
+                              {userData.email}
+                            </div>
+                          </div>
                         </div>
-                        <div className="px-2">
-                          <button
-                            onClick={handleLogout}
-                            className="flex items-center w-full rounded-md text-left px-4 py-2 text-sm text-white bg-red-600"
-                          >
-                            <FiLogOut className="mr-2" size={14} /> Logout
-                          </button>
-                        </div>
-                      </>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center justify-center gap-2 w-full rounded-md px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 transition"
+                        >
+                          <FiLogOut size={14} />
+                          Logout
+                        </button>
+                      </div>
                     )}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Mobile menu button - hidden on /cart route */}
             {!window.location.pathname.includes("/cart") && (
               <button
                 className="md:hidden p-1 text-[#484848] hover:text-black transition-colors"
@@ -275,7 +377,6 @@ const Header = ({ isLoading = false }) => {
                 </button>
               </div>
 
-              {/* Navigation Links */}
               <nav className="flex-1 flex flex-col p-6 space-y-6 poppins-thin overflow-y-auto">
                 <a
                   href="/"
@@ -314,28 +415,47 @@ const Header = ({ isLoading = false }) => {
                 </a>
               </nav>
 
-              {/* Separated Auth Buttons at Bottom */}
               <div className="border-t p-6">
-                {!isLoggedIn ? (
-                  <button
-                    onClick={() => {
-                      handleSignup();
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full py-2 flex justify-center items-center gap-2 bg-black text-white text-xs rounded hover:bg-gray-800 transition-colors"
+                {!userData ? (
+                  <motion.div
+                    variants={shakeVariants}
+                    initial="idle"
+                    animate={requireLogin ? "shake" : "idle"}
                   >
-                    <AiOutlineGoogle />
-                    Signin with Google{" "}
-                  </button>
+                    <button
+                      onClick={() => {
+                        handleSignup();
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full py-2 flex justify-center items-center gap-2 bg-black text-white text-xs rounded hover:bg-gray-800 transition-colors"
+                    >
+                      <AiOutlineGoogle />
+                      Sign in with Google
+                    </button>
+                  </motion.div>
                 ) : (
-                  <div className="space-y-3">
-                    <div className="text-[#484848] text-xs">Hello</div>
+                  <div className="space-y-2">
+                    <div className="flex gap-2 items-start justify-start">
+                      {userData?.avatar && (
+                        <img
+                          src={userData.avatar}
+                          alt=""
+                          className="w-5 h-5 rounded-full"
+                        />
+                      )}
+                      <div className="text-[#484848] font-bold text-xs flex justify-center items-center">
+                        Hello {userData.name}
+                      </div>
+                    </div>
+                    <div className="text-[#484848] text-xs font-semibold">
+                      {userData.email}
+                    </div>
                     <button
                       onClick={() => {
                         handleLogout();
                         setIsMenuOpen(false);
                       }}
-                      className="w-full flex items-center justify-center py-2 border border-black text-black text-xs rounded hover:bg-gray-100 transition-colors"
+                      className="w-full flex bg-red-700 items-center justify-center py-2 border text-white text-xs rounded hover:bg-gray-100 transition-colors"
                     >
                       <FiLogOut className="mr-2" size={14} /> Logout
                     </button>

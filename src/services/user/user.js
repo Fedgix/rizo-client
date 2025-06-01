@@ -36,10 +36,10 @@ export const getSingleProduct = async (productId) => {
   }
 };
 
-export const newArrivels = async (limit) => {
+export const newArrivels = async (limit, filter) => {
   try {
     const { data } = await axiosConfig.get(
-      `product/new-arrivals/all?limit=${limit}`
+      `product/new-arrivals/all?limit=${limit}${filter}`
     );
     return data.data;
   } catch (error) {
@@ -59,7 +59,7 @@ export const addToCart = async (payload) => {
 
 export const getCart = async () => {
   try {
-    const { data } = await axiosConfig.get("cart/6836fd29c1c36dcec69b99b6");
+    const { data } = await axiosConfig.get("cart");
     return data.data;
   } catch (error) {
     console.log(error);
@@ -76,10 +76,9 @@ export const updateQuantity = async (params, body) => {
   }
 };
 
-export const deleteProduct = async (product, body) => {
+export const deleteProduct = async (product) => {
   try {
-    console.log(body, product, "❌❌❌");
-    const { data } = await axiosConfig.delete(`cart/${product}`, body);
+    const { data } = await axiosConfig.delete(`cart/${product}`);
     console.log(data, "❗");
   } catch (error) {
     console.log(error);

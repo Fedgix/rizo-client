@@ -7,6 +7,8 @@ import { BiMinus, BiPlus } from "react-icons/bi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
+import Cookies from "js-cookie";
+
 import {
   deleteProduct,
   getCart,
@@ -17,7 +19,6 @@ export default function Cart() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
-
   
   useEffect(() => {
     getCart()
@@ -35,7 +36,6 @@ export default function Cart() {
   const increase = async (id, quantity) => {
     try {
       const payload = {
-        userId: "6836fd29c1c36dcec69b99b6",
         quantity,
       };
       const update = await updateQuantity(`/${id}/increment`, payload);
@@ -48,7 +48,6 @@ export default function Cart() {
     try {
       console.log(id, "❌❌❌");
       const payload = {
-        userId: "6836fd29c1c36dcec69b99b6",
         quantity,
       };
       const update = await updateQuantity(`/${id}/decrement`, payload);
@@ -60,10 +59,8 @@ export default function Cart() {
 
   const removeItem = async (id) => {
     try {
-      const payload = {
-        userId: "6836fd29c1c36dcec69b99b6",
-      };
-      const update = await deleteProduct(id,payload);
+   
+      const update = await deleteProduct(id);
 
       if (update) {
         setCartItems((items) => items.filter((item) => item.id !== id));

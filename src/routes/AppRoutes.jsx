@@ -1,5 +1,5 @@
-import React, { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import Product from "../pages/product/Product";
 import LandingPage from "../pages/landingpage/LandingPage";
 import AllProducts from "../pages/full products/AllProducts";
@@ -9,8 +9,8 @@ import Cart from "../pages/cart/Cart";
 import Checkout from "../pages/checkout/Checkout";
 import Order from "../pages/order/Order";
 import About from "../pages/about/About";
-import Login from "../pages/auth/Login";
-import { LoginPage } from "../helpers/components/Ex";
+import NewArrivel from "../pages/new arrivel/NewArrivel";
+import ProtectedRoute from "./ProtectedRoutes";
 
 const AppRoutes = () => {
   return (
@@ -20,11 +20,15 @@ const AppRoutes = () => {
       <Route path="/products" element={<AllProducts />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/order" element={<Order />} />
+      
+      <Route element={<ProtectedRoute />}>
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order" element={<Order />} />
+      </Route>
+      
       <Route path="/about" element={<About />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/new-arrivals" element={<NewArrivel />} />
     </Routes>
   );
 };
