@@ -1,20 +1,21 @@
 import * as Yup from "yup";
 
 export const checkoutAddress = Yup.object({
-  firstName: Yup.string().required("First name is required"),
-  lastName: Yup.string().required("Last name is required"),
+  fullName: Yup.string().required("Full name is required"),
   address: Yup.string().required("Address is required"),
   city: Yup.string().required("City is required"),
-  apartment: Yup.string(),
+  landmark: Yup.string().required("Landmark is required"),
   state: Yup.object().required("State is required"),
   pincode: Yup.string()
-    .matches(/^[0-9]+$/, "Must be only digits")
+    .matches(/^[0-9]+$/, "Pincode must be numeric")
+    .length(6, "Pincode must be 6 digits")
     .required("Pincode is required"),
   phoneNumber: Yup.string()
-    .matches(/^[0-9]+$/, "Must be only digits")
+    .matches(/^[0-9]+$/, "Phone number must be numeric")
+    .length(10, "Phone number must be 10 digits")
     .required("Phone number is required"),
+  addressType: Yup.string().required("Address type is required"),
 });
-
 export const contactForm = Yup.object({
   name: Yup.string().required("Name is required"),
   email: Yup.string()

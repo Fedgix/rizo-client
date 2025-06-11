@@ -11,6 +11,7 @@ import Order from "../pages/order/Order";
 import About from "../pages/about/About";
 import NewArrivel from "../pages/new arrivel/NewArrivel";
 import ProtectedRoute from "./ProtectedRoutes";
+import TermsAndConditions from "../pages/termsandconditions/TermsAndConditions";
 
 const AppRoutes = () => {
   return (
@@ -29,6 +30,7 @@ const AppRoutes = () => {
       
       <Route path="/about" element={<About />} />
       <Route path="/new-arrivals" element={<NewArrivel />} />
+      <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
     </Routes>
   );
 };

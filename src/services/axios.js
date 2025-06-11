@@ -5,95 +5,73 @@ const baseURL = import.meta.env.VITE_BASE_URI;
 
 export const axiosConfig = axios.create({
   baseURL,
-  withCredentials: true, 
 });
 
-let isRefreshing = false;
-let failedQueue = [];
-
-const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  
-  failedQueue = [];
-};
-
+// REQUEST INTERCEPTOR
 axiosConfig.interceptors.request.use(
   (config) => {
-    const accessToken = Cookies.get("accessToken");
-    
-    
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    const cookieStr = Cookies.get("rizoUser");
+    if (cookieStr) {
+      try {
+        const cookie = JSON.parse(cookieStr);
+        const accessToken = cookie.accessToken;
+        if (accessToken) {
+          config.headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+      } catch (error) {
+        console.error("Invalid rizoUser cookie format:", error);
+        Cookies.remove("rizoUser");
+      }
     }
-    
     return config;
   },
   (error) => Promise.reject(error)
 );
 
+// RESPONSE INTERCEPTOR FOR TOKEN REFRESH
 axiosConfig.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        }).then(() => {
-          const newAccessToken = Cookies.get("accessToken");
-          if (newAccessToken) {
-            originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          }
-          return axiosConfig(originalRequest);
-        }).catch(err => {
-          return Promise.reject(err);
-        });
-      }
 
+    // Check if error is 401 and we haven't already retried
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      isRefreshing = true;
 
       try {
-        await axiosConfig.post('/users/auth/refresh-token');
-                const newAccessToken = Cookies.get("accessToken");
-        
-        if (newAccessToken) {
-          processQueue(null, newAccessToken);
-          
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          
-          return axiosConfig(originalRequest);
-        } else {
-          throw new Error("No access token received after refresh");
-        }
-        
+        const cookieStr = Cookies.get("rizoUser");
+        if (!cookieStr) throw new Error("No refresh token available");
+
+        const cookie = JSON.parse(cookieStr);
+        const refreshToken = cookie.refreshToken;
+        const { data } = await axios.post(
+          `${baseURL}users/auth/refresh-token`,
+          {
+            refreshToken,
+          }
+        );
+
+        const newAccessToken = data.data.accessToken;
+        const newRefreshToken = data.data.refreshToken;
+
+        const updatedCookie = {
+          ...cookie,
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        };
+        Cookies.set("rizoUser", JSON.stringify(updatedCookie), { expires: 7 });
+
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        return axiosConfig(originalRequest);
       } catch (refreshError) {
-        console.log("catching error")
-        processQueue(refreshError, null);
-        
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
+        console.error("Token refresh failed:", refreshError);
         Cookies.remove("rizoUser");
-        
-   
-        if (typeof window !== 'undefined') {
-          window.location.href = '/';
-        }
-        
+        window.location.href = "/";
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
-    
+
     return Promise.reject(error);
   }
 );

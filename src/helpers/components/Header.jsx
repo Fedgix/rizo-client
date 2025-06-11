@@ -15,6 +15,7 @@ import Box from "@mui/material/Box";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { login, logout } from "../../services/auth/auth";
 import { UserContext } from "../custom/UserContext";
+import { openSearch } from "../../services/user/user";
 
 const Header = ({ isLoading = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,7 +31,27 @@ const Header = ({ isLoading = false }) => {
   const [isMobile, setIsMobile] = useState(false);
   const userMenuRef = useRef(null);
 
-  // Check screen size on mount and resize
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typingTimeout, setTypingTimeout] = useState(null);
+  const inputRef = useRef(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setSearchResults([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -73,6 +94,7 @@ const Header = ({ isLoading = false }) => {
     if (encodedUser) {
       const user = JSON.parse(atob(encodedUser));
       Cookies.set("rizoUser", JSON.stringify(user));
+
       setUserData(user);
     }
   }, [searchParams]);
@@ -153,6 +175,89 @@ const Header = ({ isLoading = false }) => {
       console.log(error);
     }
   };
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    setSearchQuery("");
+
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+    };
+  }, [typingTimeout]);
+
+  useEffect(() => {
+    if (isSearchOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
+  const handleSearchChange = async (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setCurrentPage(1); // Reset to first page when query changes
+
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    if (value.length > 2) {
+      setIsLoadingResults(true);
+
+      const timeout = setTimeout(async () => {
+        try {
+          const response = await openSearch(value, 1);
+          setSearchResults(response.results);
+          setTotalPages(response.totalPages);
+          setHasMore(response.currentPage < response.totalPages);
+        } catch (error) {
+          console.log(error);
+          setSearchResults([]);
+        } finally {
+          setIsLoadingResults(false);
+        }
+      }, 200); // Reduced to 500ms for better UX
+
+      setTypingTimeout(timeout);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  // Function to load more results
+  const loadMoreResults = async () => {
+    if (isLoadingResults || !hasMore) return;
+
+    setIsLoadingResults(true);
+    try {
+      const nextPage = currentPage + 1;
+      const response = await openSearch(searchQuery, nextPage);
+      console.log(response, "😂");
+      setSearchResults((prev) => [...prev, ...response.results]);
+      setCurrentPage(nextPage);
+      setHasMore(nextPage < response.totalPages);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingResults(false);
+    }
+  };
+
+  // Handle infinite scroll
+  const handleScroll = () => {
+    if (dropdownRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = dropdownRef.current;
+      if (scrollHeight - scrollTop <= clientHeight + 50 && hasMore) {
+        loadMoreResults();
+      }
+    }
+  };
+
+  console.log(searchResults, "❤️❤️❤️");
 
   if (isLoading) {
     return (
@@ -251,9 +356,124 @@ const Header = ({ isLoading = false }) => {
           </div>
 
           <div className="flex items-center md:space-x-4 space-x-2 relative">
-            <button className="p-1 text-[#484848] hover:text-black transition-colors">
-              <FiSearch size={16} />
-            </button>
+            <div className="flex items-center relative md:w-52 w-48 justify-end">
+              <div
+                className={`relative overflow-hidden transition-all duration-300 ease-in-out ${
+                  isSearchOpen ? "md:w-60 w-48 " : "w-0"
+                }`}
+              >
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-full bg-transparent border-b border-gray-400 focus:border-black outline-none py-1 text-sm transition-colors duration-200"
+                  placeholder="Search..."
+                />
+              </div>
+
+              <button
+                onClick={toggleSearch}
+                className="p-1 text-[#484848] hover:text-black transition-colors"
+                aria-label={isSearchOpen ? "Close search" : "Open search"}
+              >
+                {isSearchOpen ? <FiX size={16} /> : <FiSearch size={16} />}
+              </button>
+
+              {isSearchOpen && searchQuery.length > 2 && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute top-full right-0 mt-2 w-full max-w-md bg-white rounded-md shadow-lg z-50 max-h-96 custom-scrollbar overflow-y-auto"
+                  onScroll={handleScroll}
+                >
+                  {isLoadingResults ? (
+                    <div className="p-4 flex justify-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <div className="divide-y divide-gray-100">
+                      {searchResults.map((product, index) => (
+                        <div
+                          key={`${product.id}-${index}`}
+                          className="py-3 px-2 hover:bg-gray-50 cursor-pointer transition-colors"
+                          onClick={() => {
+                            navigate(`/product?id=${product.id}`);
+                            setIsSearchOpen(false);
+                            setSearchQuery("");
+                            setSearchResults([]);
+                          }}
+                        >
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0">
+                              <img
+                                src={
+                                  product.thumbnailImage || product.defaultImage
+                                }
+                                alt={product.name}
+                                className="w-10 h-10 object-cover rounded"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-xs font-medium text-gray-900 truncate">
+                                {product.name}
+                              </h3>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {product.category}
+                              </p>
+                              <div className="mt-1 flex items-center">
+                                {product.variants &&
+                                  product.variants.length > 0 && (
+                                    <div className="flex items-center space-x-1">
+                                      {product.variants
+                                        .slice(0, 5)
+                                        .map((variant, i) => {
+                                          const cssColor = variant.color
+                                            .toLowerCase()
+                                            .replace(/\s+/g, "");
+                                          return (
+                                            <span
+                                              key={i}
+                                              className="w-3 h-1  border border-gray-200"
+                                              style={{
+                                                backgroundColor: cssColor,
+                                              }}
+                                              title={variant.color}
+                                            />
+                                          );
+                                        })}
+                                      {product.variants.length > 5 && (
+                                        <span className="text-xs text-gray-500">
+                                          +{product.variants.length - 5}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span className="text-xs font-semibold text-gray-900">
+                                ₹
+                                {product.minPrice?.toFixed(2) ||
+                                  product.basePrice?.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {isLoadingResults && hasMore && (
+                        <div className="p-3 text-center text-sm text-gray-500">
+                          Loading more results...
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="py-4 px-3 text-center text-xs text-gray-500">
+                      No results found for "{searchQuery}"
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {!window.location.pathname.includes("/cart") && (
               <button
@@ -335,14 +555,14 @@ const Header = ({ isLoading = false }) => {
               </AnimatePresence>
             </div>
 
-            {!window.location.pathname.includes("/cart") && (
-              <button
-                className="md:hidden p-1 text-[#484848] hover:text-black transition-colors"
-                onClick={() => setIsMenuOpen(true)}
-              >
-                <FiMenu size={20} />
-              </button>
-            )}
+            {/* {!window.location.pathname.includes("/cart") && ( */}
+            <button
+              className="md:hidden p-1 text-[#484848] hover:text-black transition-colors"
+              onClick={() => setIsMenuOpen(true)}
+            >
+              <FiMenu size={20} />
+            </button>
+            {/* )} */}
           </div>
         </div>
       </div>

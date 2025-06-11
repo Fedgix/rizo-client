@@ -147,7 +147,7 @@ const VetherBanner = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate(banner.ctaLink)}
+                  onClick={() => navigate(`shop?${banner.ctaLink}`)}
                   className="bg-black text-white py-2 px-6  text-xs rounded-md hover:bg-gray-800 transition"
                 >
                   SHOP NOW

@@ -18,12 +18,12 @@ const Shop = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [totalProducts, setTotalProducts] = useState(0);
   const [searchParams] = useSearchParams();
-
   const categoryFromRoute = searchParams.get("category");
+  const seasonFromRoute = searchParams.get("season");
   const [filters, setFilters] = useState({
     gender: null,
     category: categoryFromRoute || "all",
-    season: null,
+    season: seasonFromRoute || null,
     size: null,
     minPrice: "",
     maxPrice: "",

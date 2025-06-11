@@ -78,8 +78,79 @@ export const updateQuantity = async (params, body) => {
 
 export const deleteProduct = async (product) => {
   try {
-    const { data } = await axiosConfig.delete(`cart/${product}`);
-    console.log(data, "❗");
+    await axiosConfig.delete(`cart/${product}`);
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};
+
+export const addAddress = async (values) => {
+  try {
+    const { data } = await axiosConfig.post("address", values);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};
+
+export const getAddress = async () => {
+  try {
+    const { data } = await axiosConfig.get("address");
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};
+
+export const deleteAddress = async (id) => {
+  try {
+    const { data } = await axiosConfig.delete(`address/${id}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+    if (error.message === "Network Error") {
+      throw new Error(error.message);
+    } else {
+      throw new Error(error.response.data.error);
+    }
+  }
+};
+
+export const editAddress = async (id, values) => {
+  try {
+    const { data } = await axiosConfig.put(`address/${id}`, values);
+    return data;
+  } catch (error) {
+    console.log(error);
+    if (error.message === "Network Error") {
+      throw new Error(error.message);
+    } else {
+      throw new Error(error.response.data.error);
+    }
+  }
+};
+
+export const makeDefultAddress = async (id) => {
+  try {
+    const { data } = await axiosConfig.patch(`address/${id}/default`);
+    return data;
+  } catch (error) {
+    console.log(error);
+    if (error.message === "Network Error") {
+      throw new Error(error.message);
+    } else {
+      throw new Error(error.response.data.error);
+    }
+  }
+};
+
+export const openSearch = async (values) => {
+  try {
+    const { data } = await axiosConfig.get(`search?q=${values}`);
+    return data.data
   } catch (error) {
     console.log(error);
   }
