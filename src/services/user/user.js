@@ -155,3 +155,13 @@ export const openSearch = async (values) => {
     console.log(error);
   }
 };
+
+
+export const contactFormSubmit =  async(values)=>{
+  try {
+    const {data} = await axiosConfig.post(`contact`,values)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+}

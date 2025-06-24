@@ -4,24 +4,55 @@ import { TextField, Box, Skeleton } from "@mui/material";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
 import { contactForm } from "../../helpers/validations/validation";
+import { contactFormSubmit } from "../../services/user/user";
 
 const Contact = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       comment: "",
     },
     validationSchema: contactForm,
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: (values,{ resetForm }) => {
+      contactFormSubmit(values)
+        .then((data) => {
+          if (data.status === "success") {
+            setShowToast(true);
+            setToastType("success");
+            setToastMessage(data.message);
+            resetForm();
+          } else {
+            setShowToast(true);
+            setToastMessage("Please try again");
+            setToastType("fail");
+          }
+        })
+        .catch((err) => {
+          setShowToast(true);
+          setToastMessage("Please try again");
+          setToastType("fail");
+          console.log(err);
+        });
     },
   });
 
+  useEffect(() => {
+    let timer;
+    if (showToast) {
+      timer = setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [showToast]);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -31,6 +62,61 @@ const Contact = () => {
 
   return (
     <div className="w-full h-screen flex flex-col justify-between">
+      {showToast && (
+        <div className="fixed top-20 right-2 z-50 overflow-hidden">
+          <div
+            className={`flex items-center w-full max-w-xs md:px-4 px-2 md:py-2 py-1 rounded-lg shadow ${
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+            style={{
+              transform: "translateX(0)",
+              animation: "0.1s ease-out 0s 1 normal forwards running slideIn",
+            }}
+            role="alert"
+          >
+            <div className="inline-flex items-center justify-center flex-shrink-0 w-4 h-4">
+              {toastType === "success" ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              )}
+            </div>
+            <div className="md:text-sm text-xs font-normal">{toastMessage}</div>
+          </div>
+          <style>{`
+            @keyframes slideIn {
+              from {
+                transform: translateX(100%);
+              }
+              to {
+                transform: translateX(0);
+              }
+            }
+          `}</style>
+        </div>
+      )}
       {isLoading ? (
         <div className="animate-pulse">
           <Box sx={{ width: "100%", height: 80, bgcolor: "#f6f6f6" }} />
@@ -190,23 +276,26 @@ const Contact = () => {
                     color="xxw"
                     fullWidth
                     size="small"
-                    id="phone"
-                    name="phone"
+                    id="phoneNumber"
+                    name="phoneNumber"
                     label="Phone number"
                     variant="outlined"
                     type="tel"
-                    value={formik.values.phone}
+                    value={formik.values.phoneNumber}
                     onChange={(e) => {
                       formik.handleChange(e);
-                      if (formik.errors.phone) {
+                      if (formik.errors.phoneNumber) {
                         formik.setErrors({
                           ...formik.errors,
-                          phone: undefined,
+                          phoneNumber: undefined,
                         });
                       }
                     }}
                     onBlur={formik.handleBlur}
-                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                    error={
+                      formik.touched.phoneNumber &&
+                      Boolean(formik.errors.phoneNumber)
+                    }
                     sx={{
                       "& .MuiInputBase-input": { color: "black" },
                       "& .MuiInputLabel-root": {
