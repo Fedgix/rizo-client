@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { HiMiniWallet } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 
 const Payment = () => {
-      const navigate = useNavigate();
-      const [discountCode, setDiscountCode] = useState("");
-    
+  const navigate = useNavigate();
+
   return (
     <div className="w-full md:border-l-[2px] md:hidden-border-t-[2px] md:py-0 py-4 border-gray-100">
       <div className="md:px-7 px-2">
@@ -31,8 +30,6 @@ const Payment = () => {
               <span className="text-base font-semibold">₹984.00</span>
             </div>
           </div>
-
-       
 
           <div className="space-y-3  font-semibold  pb-4">
             <div className="flex justify-between text-sm">

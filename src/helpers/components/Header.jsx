@@ -179,7 +179,6 @@ const Header = ({ isLoading = false }) => {
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
     setSearchQuery("");
-
   };
 
   useEffect(() => {
@@ -236,7 +235,6 @@ const Header = ({ isLoading = false }) => {
     try {
       const nextPage = currentPage + 1;
       const response = await openSearch(searchQuery, nextPage);
-      console.log(response, "😂");
       setSearchResults((prev) => [...prev, ...response.results]);
       setCurrentPage(nextPage);
       setHasMore(nextPage < response.totalPages);
@@ -256,8 +254,6 @@ const Header = ({ isLoading = false }) => {
       }
     }
   };
-
-  console.log(searchResults, "❤️❤️❤️");
 
   if (isLoading) {
     return (
@@ -366,9 +362,18 @@ const Header = ({ isLoading = false }) => {
                   ref={inputRef}
                   type="text"
                   value={searchQuery}
-                  onChange={handleSearchChange}
+                  onChange={(e) => {
+                    const sanitized = e.target.value.replace(
+                      /[<>"'`;(){}[\]#$/\\]/g,
+                      ""
+                    );
+                    handleSearchChange({
+                      target: { value: sanitized },
+                    });
+                  }}
                   className="w-full bg-transparent border-b border-gray-400 focus:border-black outline-none py-1 text-sm transition-colors duration-200"
                   placeholder="Search..."
+                  maxLength="100" 
                 />
               </div>
 

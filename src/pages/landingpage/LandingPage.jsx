@@ -145,7 +145,7 @@ const LandingPage = () => {
                   <img
                     src={item.imageUrl}
                     alt={`Banner ${index + 1}`}
-                    className="w-full  object-fit transition-all duration-500 object-fit md:h-[500px] h-[300px]"
+                    className="w-full  object-fit transition-all duration-500 object-fit md:h-[500px] h-[200px]"
                   />
                 </div>
               ))}

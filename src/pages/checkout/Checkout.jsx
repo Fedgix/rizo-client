@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import {
-  Checkbox,
-  Input,
+ 
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -10,14 +9,12 @@ import {
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 
 import Select from "react-select";
-import { Country, State, City } from "country-state-city";
+import { State } from "country-state-city";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
-import { HiMiniWallet } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
+
 import { checkoutAddress } from "../../helpers/validations/validation";
 import Skeleton from "@mui/material/Skeleton";
-import Box from "@mui/material/Box";
 import { HomeIcon } from "flowbite-react";
 import { MdApartment } from "react-icons/md";
 import {
@@ -118,7 +115,6 @@ const Checkout = () => {
           await updateAddress(currentAddressId, payload);
         } else {
           const data = await addAddress(payload);
-          console.log(data, "❤️‍🩹❤️‍🩹");
           if (data.status === "Success") {
             setShowToast(true);
             setToastMessage(data.message);
@@ -562,6 +558,7 @@ const Checkout = () => {
                     <div className="flex gap-2">
                       <TextField
                         fullWidth
+                        inputProps={{ maxLength: 100 }}
                         size="small"
                         id="fullName"
                         name="fullName"
@@ -569,12 +566,11 @@ const Checkout = () => {
                         variant="outlined"
                         value={formik.values.fullName}
                         onChange={(e) => {
-                          formik.handleChange(e);
+                          // Sanitize input - allow letters, spaces, and common name characters
+                          const sanitized = e.target.value.replace(/[^a-zA-Z\s\-'.]/g, '');
+                          formik.setFieldValue("fullName", sanitized);
                           if (formik.errors.fullName) {
-                            formik.setErrors({
-                              ...formik.errors,
-                              fullName: undefined,
-                            });
+                            formik.setErrors({ ...formik.errors, fullName: undefined });
                           }
                         }}
                         error={
@@ -619,13 +615,11 @@ const Checkout = () => {
                         label="Phone Number"
                         variant="outlined"
                         value={formik.values.phoneNumber}
-                        onChange={(e) => {
-                          formik.handleChange(e);
+                        onChange={(e) =>  {
+                          const sanitized = e.target.value.replace(/[^0-9+\-()\s]/g, '');
+                          formik.setFieldValue("phoneNumber", sanitized);
                           if (formik.errors.phoneNumber) {
-                            formik.setErrors({
-                              ...formik.errors,
-                              phoneNumber: undefined,
-                            });
+                            formik.setErrors({ ...formik.errors, phoneNumber: undefined });
                           }
                         }}
                         error={
@@ -713,14 +707,14 @@ const Checkout = () => {
                       variant="outlined"
                       value={formik.values.address}
                       onChange={(e) => {
-                        formik.handleChange(e);
+                        // Allow alphanumeric, spaces, and common address characters
+                        const sanitized = e.target.value.replace(/[<>"'`;(){}[\]\\]/g, '');
+                        formik.setFieldValue("address", sanitized);
                         if (formik.errors.address) {
-                          formik.setErrors({
-                            ...formik.errors,
-                            address: undefined,
-                          });
+                          formik.setErrors({ ...formik.errors, address: undefined });
                         }
                       }}
+                      inputProps={{ maxLength: 200 }}
                       error={
                         formik.touched.address && Boolean(formik.errors.address)
                       }
@@ -765,6 +759,7 @@ const Checkout = () => {
                         formik.touched.landmark &&
                         Boolean(formik.errors.landmark)
                       }
+                      
                       sx={{
                         "& .MuiInputBase-input": { color: "black" },
                         "& .MuiInputLabel-root": {
