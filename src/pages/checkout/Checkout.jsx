@@ -26,7 +26,7 @@ import {
 } from "../../services/user/user";
 import { RxPencil2 } from "react-icons/rx";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import Payment from "./payment";
+import Payment from "./Payment";
 
 const Checkout = () => {
   const [isLoading, setIsLoading] = useState(true);
