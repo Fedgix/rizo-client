@@ -1,8 +1,14 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import flowbiteReact from "flowbite-react/plugin/vite";
+import { defineConfig } from "vite";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), flowbiteReact()],
-})
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          ui: ["flowbite-react", "some-other-ui-lib"],
+        },
+      },
+    },
+  },
+});
