@@ -6,7 +6,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ["react", "react-dom"],
-          ui: ["flowbite-react", "some-other-ui-lib"],
+          ui: ["flowbite-react"],
         },
       },
     },
