@@ -329,6 +329,9 @@ const Product = () => {
     try {
       if (!userData) {
         setRequireLogin(true);
+        setToastMessage("Please Login ");
+        setToastType("error");
+        setShowToast(true);
         return null;
       }
 
@@ -369,7 +372,7 @@ const Product = () => {
       {showToast && (
         <div className="fixed top-4 right-4 z-50">
           <div
-            className={`flex items-center w-full max-w-xs md:px-4 px-2 md:py-2 py-1 rounded-lg shadow ${
+            className={`flex items-center md:w-full h-12 w-40  max-w-xs md:px-4 px-2 md:py-2 py-1 rounded-lg shadow ${
               toastType === "success"
                 ? "bg-green-500 text-white"
                 : "bg-red-500 text-white"
@@ -380,7 +383,7 @@ const Product = () => {
             }}
             role="alert"
           >
-           <div className="inline-flex items-center justify-center flex-shrink-0 w-4 h-4">
+            <div className="inline-flex items-center justify-center flex-shrink-0 w-4 h-4">
               {toastType === "success" ? (
                 <svg
                   className="w-5 h-5"

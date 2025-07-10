@@ -131,7 +131,7 @@ const VetherBanner = () => {
                 <img
                   src={banner.imageUrl}
                   alt={banner.subtitle}
-                  className="w-full object-fit transition-all duration-500 md:h-[400px] h-[300px]"
+                  className="w-full object-center transition-all duration-500 md:h-[400px] h-[250px]"
                 />
               </div>
               <div className="md:w-1/2 p-8 md:p-12">

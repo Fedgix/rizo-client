@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import { getCategories } from "../../services/user/user";
 import { useNavigate } from "react-router-dom";
+import { MdChevronLeft,MdChevronRight } from "react-icons/md";
 
 const LandingCategory = () => {
   const [sliderRef, setSliderRef] = useState(null);
@@ -235,18 +236,18 @@ const LandingCategory = () => {
           }
         `}
       </style>
-      <div className="absolute bottom-5 left-[49%] transform -translate-x-1/2 z-10 flex items-center gap-2">
+      <div className="absolute md:bottom-5 -bottom-1 left-[49%] transform -translate-x-1/2 z-10 flex items-center gap-2">
         <button
           onClick={() => sliderRef?.slickPrev()}
-          className="w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow hover:bg-gray-100"
+          className="w-8 h-8 bg-white border rounded-full shadow-xl flex items-center justify-center  hover:bg-gray-100"
         >
-          <span className="text-lg">&lt;</span>
+          <span className="text-lg"><MdChevronLeft/></span>
         </button>
         <button
           onClick={() => sliderRef?.slickNext()}
-          className="w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow hover:bg-gray-100"
+          className="w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100"
         >
-          <span className="text-lg">&gt;</span>
+          <span className="text-lg"><MdChevronRight/></span>
         </button>
       </div>
     </div>
