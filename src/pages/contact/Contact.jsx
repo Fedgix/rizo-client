@@ -21,7 +21,7 @@ const Contact = () => {
     validationSchema: contactForm,
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: (values,{ resetForm }) => {
+    onSubmit: (values, { resetForm }) => {
       contactFormSubmit(values)
         .then((data) => {
           if (data.status === "success") {

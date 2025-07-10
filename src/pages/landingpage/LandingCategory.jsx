@@ -27,13 +27,23 @@ const LandingCategory = () => {
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
-    centerMode: false,
     arrows: false,
-    beforeChange: (current, next) => setCurrentSlide(next),
     focusOnSelect: true,
     initialSlide: 0,
+    beforeChange: (current, next) => setCurrentSlide(next),
+    slidesToShow: 3,
+    centerMode: false, // default for desktop
+    responsive: [
+      {
+        breakpoint: 768, // mobile breakpoint
+        settings: {
+          slidesToShow: 1,
+          centerMode: true, // center selected slide in mobile
+        },
+      },
+    ],
   };
+  
 
   if (isLoading) {
     return (
