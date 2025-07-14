@@ -352,10 +352,10 @@ const Header = ({ isLoading = false }) => {
           </div>
 
           <div className="flex items-center md:space-x-4 space-x-2 relative">
-            <div className="flex items-center relative md:w-52 w-48 justify-end">
+            <div className="flex items-center relative md:w-52 w-full justify-end">
               <div
                 className={`relative overflow-hidden transition-all duration-300 ease-in-out ${
-                  isSearchOpen ? "md:w-60 w-48 " : "w-0"
+                  isSearchOpen ? "md:w-60 w-full  " : "w-0"
                 }`}
               >
                 <input

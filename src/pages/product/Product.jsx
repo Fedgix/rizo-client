@@ -381,7 +381,7 @@ const Product = () => {
               transform: "translateX(0)",
               animation: "0.1s ease-out 0s 1 normal forwards running slideIn",
             }}
-            role="alert"
+            role="alert" 
           >
             <div className="inline-flex items-center justify-center flex-shrink-0 w-4 h-4">
               {toastType === "success" ? (

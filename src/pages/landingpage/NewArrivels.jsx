@@ -151,11 +151,11 @@ export const NewArrivals = () => {
               </p>
 
               {product.availableColors && product.availableColors.length > 1 && (
-                <div className="flex flex-wrap gap-2 mb-2">
+                <div className="flex flex-wrap  gap-2 mb-2">
                   {product.availableColors.map((colorObj, index) => (
                     <button
                       key={`${product.id}-${colorObj.color}-${index}`}
-                      className={`w-5 h-2  border ${
+                      className={`w-5 h-5 rounded-full  border ${
                         selectedColors[product.id] === colorObj.color
                           ? "ring-2 ring-offset-1 ring-gray-400"
                           : ""

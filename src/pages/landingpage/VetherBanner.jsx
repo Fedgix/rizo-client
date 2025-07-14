@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import { getBanner } from "../../services/user/user";
 import { useNavigate } from "react-router-dom";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 const VetherBanner = () => {
   const [sliderRef, setSliderRef] = useState(null);
@@ -158,18 +159,18 @@ const VetherBanner = () => {
         ))}
       </Slider>
 
-      <div className="flex justify-center mt-6 space-x-2">
+      <div className="flex justify-center md:mt-6 space-x-2">
         <button
           onClick={() => sliderRef?.slickPrev()}
-          className="bg-white border border-gray-300 rounded-full p-2 w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100"
+          className="bg-white border border-gray-300 rounded-full p-2 w-8 h-8 flex items-center justify-center shadow-xl hover:bg-gray-100"
         >
-          &lt;
+          <MdChevronLeft />{" "}
         </button>
         <button
           onClick={() => sliderRef?.slickNext()}
-          className="bg-white border border-gray-300 shadow-lg rounded-full p-2 w-8 h-8 flex items-center justify-center hover:bg-gray-100"
+          className="bg-white border border-gray-300 shadow-xl rounded-full p-2 w-8 h-8 flex items-center justify-center hover:bg-gray-100"
         >
-          &gt;
+          <MdChevronRight />{" "}
         </button>
       </div>
     </div>

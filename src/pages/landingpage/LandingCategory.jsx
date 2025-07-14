@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import { getCategories } from "../../services/user/user";
 import { useNavigate } from "react-router-dom";
-import { MdChevronLeft,MdChevronRight } from "react-icons/md";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 const LandingCategory = () => {
   const [sliderRef, setSliderRef] = useState(null);
@@ -33,18 +33,31 @@ const LandingCategory = () => {
     initialSlide: 0,
     beforeChange: (current, next) => setCurrentSlide(next),
     slidesToShow: 3,
-    centerMode: false, // default for desktop
+    centerMode: false,
     responsive: [
       {
-        breakpoint: 768, // mobile breakpoint
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
-          centerMode: true, // center selected slide in mobile
-        },
+          centerMode: true,
+          centerPadding: "15%",
+          swipeToSlide: true,
+          speed: 300,
+          easing: "ease-out"
+        }
       },
-    ],
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          centerMode: true,
+          centerPadding: "15%",
+          swipeToSlide: true,
+          speed: 300
+        }
+      }
+    ]
   };
-  
 
   if (isLoading) {
     return (
@@ -165,7 +178,7 @@ const LandingCategory = () => {
           Explore our must-have styles—hoodies, sweatshirts, and classic
           tees—sorted by category for your perfect fit.
         </p>
-        <button className="bg-black poppins-thin text-xs text-gray-300 py-2.5 px-7 rounded-md mb-6 shadow-md transition">
+        <button className="bg-black poppins-thin text-xs text-gray-300 py-2.5 px-7 rounded-md mb-6 shadow-md transition hover:bg-gray-800">
           Explore More
         </button>
         <div>
@@ -192,22 +205,24 @@ const LandingCategory = () => {
         </div>
       </div>
 
-      <div className="md:w-1/2 relative md:h-[300px] h-[200px]">
+      <div className="md:w-1/2  relative md:h-[300px] h-[250px]">
         <Slider ref={setSliderRef} {...settings}>
           {category.map((cat, index) => (
             <div key={cat._id} className="px-2">
               <div
                 onClick={() => navigate(`/shop?category=${cat.name}`)}
-                className={`overflow-hidden transition-all flex-col cursor-pointer justify-center items-center duration-300 ${
-                  index === currentSlide ? "md:h-96 h-52" : "md:h-72 h-40"
-                } bg-gray-100 relative`}
+                className={`overflow-hidden transition-all duration-700 ease-out flex-col cursor-pointer justify-center items-center ${
+                  index === currentSlide
+                    ? "md:h-96 h-64 scale-105 z-10"
+                    : "md:h-72 h-40 scale-95 opacity-50"
+                } bg-gray-100 relative rounded-lg shadow-md hover:shadow-lg`}
               >
                 <img
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
-                <div className="absolute bottom-4 left-1/2 md:text-base text-xs transform -translate-x-1/2 bg-white text-black px-4 py-2 shadow text-center">
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm text-black px-4 py-2 shadow text-center text-xs md:text-sm font-medium">
                   {cat.name}
                 </div>
               </div>
@@ -216,38 +231,35 @@ const LandingCategory = () => {
         </Slider>
       </div>
 
-      <style>
-        {`
-          .slick-dots {
-            bottom: -35px;
-          }
-          .slick-dots li button:before {
-            font-size: 10px;
-            color: gray;
-          }
-          .slick-dots li.slick-active button:before {
-            color: black;
-          }
+      <style jsx>{`
+        @media (max-width: 768px) {
           .slick-slide {
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.3s ease;
           }
-          .slick-slide.slick-current {
-            transform: scale(1.08);
+          .slick-center {
+            transform: scale(1.1);
+            opacity: 1;
+            z-index: 1;
           }
-        `}
-      </style>
-      <div className="absolute md:bottom-5 -bottom-1 left-[49%] transform -translate-x-1/2 z-10 flex items-center gap-2">
+          .slick-slide:not(.slick-center) {
+            opacity: 0.7;
+          }
+        }
+      `}</style>
+
+      <div className="absolute md:bottom-5 bottom-3 left-[49%] transform -translate-x-1/2 z-10 flex items-center gap-2">
         <button
           onClick={() => sliderRef?.slickPrev()}
-          className="w-8 h-8 bg-white border rounded-full shadow-xl flex items-center justify-center  hover:bg-gray-100"
+          className="w-8 h-8 bg-white border rounded-full shadow-xl flex items-center justify-center hover:bg-gray-100 transition-all active:scale-95"
         >
-          <span className="text-lg"><MdChevronLeft/></span>
+          <MdChevronLeft className="text-lg" />
         </button>
         <button
           onClick={() => sliderRef?.slickNext()}
-          className="w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100"
+          className="w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-all active:scale-95"
         >
-          <span className="text-lg"><MdChevronRight/></span>
+          <MdChevronRight className="text-lg" />
         </button>
       </div>
     </div>
