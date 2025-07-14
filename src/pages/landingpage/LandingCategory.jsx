@@ -214,13 +214,13 @@ const LandingCategory = () => {
                 className={`overflow-hidden transition-all duration-700 ease-out flex-col cursor-pointer justify-center items-center ${
                   index === currentSlide
                     ? "md:h-96 h-64 scale-105 z-10"
-                    : "md:h-72 h-40 scale-95 opacity-50"
+                    : "md:h-72 h-40 scale-95 opacity-50 md:mt-0 mt-10 "
                 } bg-gray-100 relative rounded-lg shadow-md hover:shadow-lg`}
               >
                 <img
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="w-full h-full object-center transition-transform duration-300 hover:scale-105"
                 />
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm text-black px-4 py-2 shadow text-center text-xs md:text-sm font-medium">
                   {cat.name}
