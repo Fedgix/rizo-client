@@ -53,7 +53,7 @@ const LandingCategory = () => {
           centerMode: true,
           centerPadding: "15%",
           swipeToSlide: true,
-          speed: 300
+          speed: 500
         }
       }
     ]
