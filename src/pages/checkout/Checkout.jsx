@@ -20,7 +20,6 @@ import {
   deleteAddress,
   editAddress,
   getAddress,
-  handleFirstBuyNow,
   makeDefultAddress,
 } from "../../services/user/user";
 import { RxPencil2 } from "react-icons/rx";
