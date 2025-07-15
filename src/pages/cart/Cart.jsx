@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
@@ -125,6 +124,35 @@ export default function Cart() {
     const unitPrice =
       item.variantId?.discountPrice || item.variantId?.price || 0;
     return unitPrice * item.quantity;
+  };
+
+  const handleCheckout = async () => {
+    try {
+      if (selectedItems.length === 0) {
+        setShowToast(true);
+        setToastMessage("Please select at least one item");
+        setToastType("error");
+        return;
+      }
+      
+      const selectedCartItems = cartItems.filter(item => 
+        selectedItems.includes(item._id)
+      );
+      
+      const payload = selectedCartItems.map(item => ({
+        variantId: item.variantId._id,
+        quantity: item.quantity
+      }));
+      const encodedPayload = encodeURIComponent(JSON.stringify(payload));
+
+      navigate(`/checkout?payload=${encodedPayload}`);
+  
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Failed to proceed to checkout");
+      setToastType("error");
+      setShowToast(true);
+    }
   };
 
   return (
@@ -359,7 +387,6 @@ export default function Cart() {
                     product?.thumbnailImage || product?.defaultImage;
                   const unitPrice =
                     variant?.discountPrice || variant?.price || 0;
-
                   return (
                     <div
                       key={item.id}
@@ -475,15 +502,7 @@ export default function Cart() {
                       checkout.
                     </p>
                     <button
-                      onClick={() => {
-                        if (selectedItems.length === 0) {
-                          setShowToast(true);
-                          setToastMessage("Please select at least one item");
-                          setToastType("error");
-                          return;
-                        }
-                        navigate("/checkout", { state: { selectedItems } });
-                      }}
+                      onClick={handleCheckout}
                       className="w-full py-3 text-sm bg-black text-white rounded-md"
                     >
                       Checkout ({selectedItems.length})

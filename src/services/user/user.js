@@ -150,18 +150,65 @@ export const makeDefultAddress = async (id) => {
 export const openSearch = async (values) => {
   try {
     const { data } = await axiosConfig.get(`search?q=${values}`);
-    return data.data
+    return data.data;
   } catch (error) {
     console.log(error);
   }
 };
 
-
-export const contactFormSubmit =  async(values)=>{
+export const contactFormSubmit = async (values) => {
   try {
-    const {data} = await axiosConfig.post(`contact`,values)
-    return data
+    const { data } = await axiosConfig.post(`contact`, values);
+    return data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const initializeBuyNow = async (values) => {
+  try {
+    const { data } = await axiosConfig.post("checkout/initialize", {
+      items: values,
+    });
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};
+
+export const updateCheckoutQuantity = async (values) => {
+  try {
+    const { data } = await axiosConfig.post("checkout/update-item", values);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};
+
+export const selectedShippingAddress = async (values) => {
+  try {
+    const payload = {
+      addressId: values,
+    };
+    const { data } = await axiosConfig.post("checkout/apply-address", payload);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};
+
+export const createOrder = async () => {
+  try {
+    const payload = {
+      paymentMethod: "razorpay",
+    };
+    const { data } = await axiosConfig.post("checkout/create-order", payload);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response.data.error);
+  }
+};

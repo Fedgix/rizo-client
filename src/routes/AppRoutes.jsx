@@ -12,8 +12,10 @@ import About from "../pages/about/About";
 import NewArrivel from "../pages/new arrivel/NewArrivel";
 import ProtectedRoute from "./ProtectedRoutes";
 import TermsAndConditions from "../pages/termsandconditions/TermsAndConditions";
+import Cookies from "js-cookie";
 
 const AppRoutes = () => {
+ 
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

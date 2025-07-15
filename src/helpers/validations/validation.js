@@ -48,3 +48,17 @@ export const registerValidation = Yup.object({
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm password is required"),
 });
+
+
+
+export const addressInitialValues = {
+  fullName: "",
+  address: "",
+  landmark: "",
+  state: null,
+  pincode: "",
+  phoneNumber: "",
+  addressType: "",
+  city: "",
+  isDefault: false,
+}

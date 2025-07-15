@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import {
- 
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
+import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 
 import Select from "react-select";
@@ -13,7 +8,10 @@ import { State } from "country-state-city";
 import Header from "../../helpers/components/Header";
 import Footer from "../../helpers/components/Footer";
 
-import { checkoutAddress } from "../../helpers/validations/validation";
+import {
+  addressInitialValues,
+  checkoutAddress,
+} from "../../helpers/validations/validation";
 import Skeleton from "@mui/material/Skeleton";
 import { HomeIcon } from "flowbite-react";
 import { MdApartment } from "react-icons/md";
@@ -22,11 +20,13 @@ import {
   deleteAddress,
   editAddress,
   getAddress,
+  handleFirstBuyNow,
   makeDefultAddress,
 } from "../../services/user/user";
 import { RxPencil2 } from "react-icons/rx";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Payment from "./Payment";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const Checkout = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -37,6 +37,8 @@ const Checkout = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
+
+
   const refreshAddresses = async () => {
     try {
       const response = await getAddress();
@@ -50,6 +52,7 @@ const Checkout = () => {
       throw err;
     }
   };
+
   useEffect(() => {
     let timer;
     if (showToast) {
@@ -59,40 +62,34 @@ const Checkout = () => {
     }
     return () => clearTimeout(timer); // Cleanup on unmount
   }, [showToast]);
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const addresses = await refreshAddresses();
-        const defaultAddress = addresses.find((addr) => addr.isDefault);
-        if (defaultAddress) {
-          setSelectedAddressId(defaultAddress.id);
-        }
-        setIsLoading(false);
-      } catch (err) {
-        console.error("Error fetching addresses:", err);
-        setIsLoading(false);
+  // Update the useEffect that fetches addresses:
+useEffect(() => {
+  const fetchAddresses = async () => {
+    try {
+      const addresses = await refreshAddresses();
+      const defaultAddress = addresses.find((addr) => addr.isDefault);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress.id);
+      } else if (addresses.length > 0) {
+        // If no default, select the first address
+        setSelectedAddressId(addresses[0].id);
       }
-    };
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error fetching addresses:", err);
+      setIsLoading(false);
+    }
+  };
 
-    fetchAddresses();
-  }, []);
+  fetchAddresses();
+}, []);
   const indianStates = State.getStatesOfCountry("IN").map((state) => ({
     value: state.isoCode,
     label: state.name,
   }));
 
   const formik = useFormik({
-    initialValues: {
-      fullName: "",
-      address: "",
-      landmark: "",
-      state: null,
-      pincode: "",
-      phoneNumber: "",
-      addressType: "",
-      city: "",
-      isDefault: false,
-    },
+    initialValues: addressInitialValues,
     validationSchema: checkoutAddress,
     validateOnBlur: false,
     validateOnChange: false,
@@ -229,6 +226,7 @@ const Checkout = () => {
       setToastType("Fail");
     }
   };
+
   return (
     <div className="w-full h-full poppins-thin">
       {showToast && (
@@ -545,8 +543,8 @@ const Checkout = () => {
       ) : (
         <>
           <div className="flex justify-center p-2 md:p-20">
-            <div className="w-full md:p-6 rounded-lg   md:flex">
-              <div className="flex md:w-1/2 flex-col">
+            <div className="w-full md:p-6 rounded-lg    md:flex">
+              <div className="flex md:w-1/2 flex-col h-full">
                 <form
                   onSubmit={formik.handleSubmit}
                   className="md:space-y-4  space-y-9 md:gap-4"
@@ -567,10 +565,16 @@ const Checkout = () => {
                         value={formik.values.fullName}
                         onChange={(e) => {
                           // Sanitize input - allow letters, spaces, and common name characters
-                          const sanitized = e.target.value.replace(/[^a-zA-Z\s\-'.]/g, '');
+                          const sanitized = e.target.value.replace(
+                            /[^a-zA-Z\s\-'.]/g,
+                            ""
+                          );
                           formik.setFieldValue("fullName", sanitized);
                           if (formik.errors.fullName) {
-                            formik.setErrors({ ...formik.errors, fullName: undefined });
+                            formik.setErrors({
+                              ...formik.errors,
+                              fullName: undefined,
+                            });
                           }
                         }}
                         error={
@@ -615,11 +619,17 @@ const Checkout = () => {
                         label="Phone Number"
                         variant="outlined"
                         value={formik.values.phoneNumber}
-                        onChange={(e) =>  {
-                          const sanitized = e.target.value.replace(/[^0-9+\-()\s]/g, '');
+                        onChange={(e) => {
+                          const sanitized = e.target.value.replace(
+                            /[^0-9+\-()\s]/g,
+                            ""
+                          );
                           formik.setFieldValue("phoneNumber", sanitized);
                           if (formik.errors.phoneNumber) {
-                            formik.setErrors({ ...formik.errors, phoneNumber: undefined });
+                            formik.setErrors({
+                              ...formik.errors,
+                              phoneNumber: undefined,
+                            });
                           }
                         }}
                         error={
@@ -708,10 +718,16 @@ const Checkout = () => {
                       value={formik.values.address}
                       onChange={(e) => {
                         // Allow alphanumeric, spaces, and common address characters
-                        const sanitized = e.target.value.replace(/[<>"'`;(){}[\]\\]/g, '');
+                        const sanitized = e.target.value.replace(
+                          /[<>"'`;(){}[\]\\]/g,
+                          ""
+                        );
                         formik.setFieldValue("address", sanitized);
                         if (formik.errors.address) {
-                          formik.setErrors({ ...formik.errors, address: undefined });
+                          formik.setErrors({
+                            ...formik.errors,
+                            address: undefined,
+                          });
                         }
                       }}
                       inputProps={{ maxLength: 200 }}
@@ -759,7 +775,6 @@ const Checkout = () => {
                         formik.touched.landmark &&
                         Boolean(formik.errors.landmark)
                       }
-                      
                       sx={{
                         "& .MuiInputBase-input": { color: "black" },
                         "& .MuiInputLabel-root": {
@@ -1121,8 +1136,8 @@ const Checkout = () => {
                 )}
               </div>
 
-              <div className="md:w-1/2">
-                <Payment />
+              <div className="md:w-1/2 h-full ">
+              <Payment selectedAddressId={selectedAddressId} />
               </div>
             </div>
           </div>

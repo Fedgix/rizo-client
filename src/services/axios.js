@@ -44,14 +44,12 @@ axiosConfig.interceptors.response.use(
 
         const cookie = JSON.parse(cookieStr);
         const refreshToken = cookie.refreshToken;
-        console.log(refreshToken,cookie,"😀sd😀😀")
         const { data } = await axios.post(
           `${baseURL}users/auth/refresh-token`,
           {
             refreshToken,
           }
         );
-        console.log(data,"⚠️")
         const newAccessToken = data.data.accessToken;
         const newRefreshToken = data.data.refreshToken;
 
