@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { HiMiniWallet } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
-  
+  createOrder,
   initializeBuyNow,
+  paymentFailure,
   selectedShippingAddress,
+  successPayment,
   updateCheckoutQuantity,
 } from "../../services/user/user";
 import { BiMinus, BiPlus } from "react-icons/bi";
@@ -17,6 +19,8 @@ const Payment = ({ selectedAddressId }) => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
+  const [isProcessing, setIsProcessing] = useState(false);
+
   useEffect(() => {
     const encodedPayload = searchParams.get("payload");
     if (encodedPayload) {
@@ -34,21 +38,19 @@ const Payment = ({ selectedAddressId }) => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    selectedShippingAddress(selectedAddressId)
-      .then((data) => {
-        console.log(data, "🪙");
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowToast(true);
-        setToastMessage(err);
-        setToastType("Fail");
-        if (err === "Checkout session not found") {
-          navigate("/cart");
-        }
-      });
-  }, [selectedAddressId]);
+  const shippingAddress = async () => {
+    try {
+      return await selectedShippingAddress(selectedAddressId);
+    } catch (error) {
+      console.log(err);
+      setShowToast(true);
+      setToastMessage(err);
+      setToastType("Fail");
+      if (err === "Checkout session not found") {
+        navigate("/cart");
+      }
+    }
+  };
 
   useEffect(() => {
     let timer;
@@ -98,9 +100,181 @@ const Payment = ({ selectedAddressId }) => {
     return (price * quantity).toFixed(2);
   };
 
-  console.log(prices, "❌");
+  const handleSubmit = async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      // First validate shipping address
+      await shippingAddress();
+
+      // Create the order and get payment details
+      const create = await createOrder();
+      console.log(create, "Order creation response");
+
+      if (create.paymentConfig) {
+        const { paymentConfig, orderId } = create;
+
+        // Load Razorpay script dynamically
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+
+        script.onload = () => {
+          // Initialize Razorpay after script loads
+          const options = {
+            key: paymentConfig.key,
+            amount: paymentConfig.amount,
+            currency: paymentConfig.currency,
+            name: paymentConfig.name,
+            description: paymentConfig.description,
+            order_id: paymentConfig.order_id,
+            handler: async function (response) {
+              try {
+                console.log("Payment successful:", response);
+                const payload = {
+                  ...response,
+                  orderId: paymentConfig.order_id,
+                };
+
+                const verificationResponse = await successPayment(payload);
+                if (verificationResponse.status === "success") {
+                  setShowToast(true);
+                  setToastMessage("Payment Successful");
+                  setToastType("success");
+                  navigate("/orders");
+                } else {
+                  throw new Error("Payment verification failed");
+                }
+              } catch (error) {
+                console.error("Payment verification error:", error);
+                setShowToast(true);
+                setToastMessage("Payment verification failed");
+                setToastType("Fail");
+              }
+            },
+            prefill: paymentConfig.prefill,
+            theme: paymentConfig.theme,
+            modal: {
+              ondismiss: function () {
+                console.log("Payment modal closed");
+                setShowToast(true);
+                setToastMessage("Payment was cancelled");
+                setToastType("Fail");
+              },
+            },
+          };
+
+          // Add payment failure handler
+          options.handler = async function (response) {
+            try {
+              const payload = {
+                ...response,
+                orderId: orderId,
+              };
+              const verificationResponse = await successPayment(payload);
+              if (verificationResponse.status === "success") {
+                setShowToast(true);
+                setToastMessage("Payment Successful");
+                setToastType("success");
+                navigate("/orders");
+              } else {
+                throw new Error("Payment verification failed");
+              }
+            } catch (error) {
+              console.error("Payment verification error:", error);
+              setShowToast(true);
+              setToastMessage("Payment verification failed");
+              setToastType("Fail");
+            }
+          };
+
+          // Add payment failed callback
+          options.modal.ondismiss = async function () {
+            try {
+              // Call failure API when payment is cancelled
+              const failurePayload = {
+                orderId: orderId,
+                razorpay_order_id: paymentConfig.order_id,
+                error: {
+                  code: "PAYMENT_CANCELLED",
+                  description: "User cancelled the payment",
+                  source: "user",
+                  step: "payment_modal",
+                  reason: "user_cancelled",
+                },
+              };
+              await paymentFailure(failurePayload);
+
+              setShowToast(true);
+              setToastMessage("Payment was cancelled");
+              setToastType("Fail");
+            } catch (error) {
+              console.error("Failed to record payment cancellation:", error);
+              setShowToast(true);
+              setToastMessage("Payment was cancelled (error recording)");
+              setToastType("Fail");
+            }
+          };
+
+          const rzp = new window.Razorpay(options);
+
+          // Add error event listener for payment failures
+          rzp.on("payment.failed", async function (response) {
+            try {
+              const failurePayload = {
+                orderId: orderId,
+                razorpay_order_id: response.error.metadata.order_id,
+                error: {
+                  code: "PAYMENT_FAILED",
+                  description: "Payment failed",
+                  source: "razorpay",
+                  step: response.error.step || "payment_processing",
+                  reason: response.error.reason || "unknown",
+                },
+              };
+              await paymentFailure(failurePayload);
+
+              setShowToast(true);
+              setToastMessage(`Payment failed: ${response.error.description}`);
+              setToastType("Fail");
+            } catch (error) {
+              console.error("Failed to record payment failure:", error);
+              setShowToast(true);
+              setToastMessage("Payment failed (error recording)");
+              setToastType("Fail");
+            }
+          });
+
+          rzp.open();
+        };
+
+        script.onerror = () => {
+          throw new Error("Failed to load Razorpay script");
+        };
+
+        document.body.appendChild(script);
+
+        return () => {
+          document.body.removeChild(script);
+        };
+      } else {
+        throw new Error("Payment configuration missing");
+      }
+    } catch (error) {
+      console.log(error);
+      setShowToast(true);
+      setToastMessage(error.message || "Payment failed");
+      setToastType("Fail");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // API function to handle payment failures
+
   return (
-    <div className="w-full md:border-l-[2px] h-full flex flex-col">
+    <div className="w-full md:border-l-[2px]  flex flex-col">
       {showToast && (
         <div className="fixed  top-20 right-2 z-50 overflow-hidden">
           <div
@@ -156,13 +330,13 @@ const Payment = ({ selectedAddressId }) => {
     `}</style>
         </div>
       )}
-      <div className="md:px-7 px-2 flex-grow overflow-y-auto h-full">
-        <div className="space-y-3  h-full custom-scrollbar ">
+      <div className="md:px-7 px-2 flex-grow overflow-hidden  flex flex-col">
+        <div className="space-y-3 0 flex-grow overflow-y-auto h-[200px] custom-scrollbar">
           {products.map((item) => (
-            <div key={item.variantId} className="h-full ">
+            <div key={item.variantId} className="">
               <div className="flex justify-between items-center py-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gray-100 rounded-md relative">
+                  <div className="w-12 h-12  rounded-md relative">
                     <img
                       src={item.image}
                       alt={item.productName}
@@ -298,7 +472,7 @@ const Payment = ({ selectedAddressId }) => {
           </div>
 
           <button
-            onClick={() => navigate("/order")}
+            onClick={handleSubmit}
             className="w-full bg-black hover:bg-black/90 text-white py-3 rounded-md"
           >
             Pay now

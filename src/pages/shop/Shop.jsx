@@ -34,7 +34,7 @@ const Shop = () => {
       ...prev,
       category: categoryFromRoute || null,
     }));
-    setCurrentPage(1); // Reset to first page when category changes
+    setCurrentPage(1); 
   }, [categoryFromRoute]);
   const [tempPriceFilters, setTempPriceFilters] = useState({
     minPrice: "",

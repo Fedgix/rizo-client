@@ -308,8 +308,8 @@ const Header = ({ isLoading = false }) => {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm md:px-20 px-0">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex-shrink-0">
+        <div className="flex  items-center  justify-between">
+          <div className="flex-shrink-0 ">
             <img
               src="logo/ChatGPT_Image_May_7__2025__03_32_37_PM-removebg-preview 1.png"
               alt="Logo"
@@ -318,7 +318,7 @@ const Header = ({ isLoading = false }) => {
             />
           </div>
 
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden  poppins-medium md:flex space-x-8 md:ml-10 ">
             <a
               href="/"
               className="text-[#484848] hover:text-black transition-colors"
@@ -349,10 +349,22 @@ const Header = ({ isLoading = false }) => {
             >
               Contact
             </a>
+            <a
+              onClick={() => {
+                if (!userData) {
+                  setRequireLogin(true);
+                } else {
+                  navigate("/orders");
+                }
+              }}
+              className="text-[#484848] hover:text-black transition-colors"
+            >
+              Orders
+            </a>
           </div>
 
-          <div className="flex items-center md:space-x-4 space-x-2 relative">
-            <div className="flex items-center relative md:w-52 w-full justify-end">
+          <div className="flex  items-center md:space-x-4 space-x-2  relative">
+            <div className="flex  items-center relative md:w-52 w-full justify-end">
               <div
                 className={`relative overflow-hidden transition-all duration-300 ease-in-out ${
                   isSearchOpen ? "md:w-60 w-full  " : "w-0"
@@ -373,7 +385,7 @@ const Header = ({ isLoading = false }) => {
                   }}
                   className="w-full bg-transparent border-b border-gray-400 focus:border-black outline-none py-1 text-sm transition-colors duration-200"
                   placeholder="Search..."
-                  maxLength="100" 
+                  maxLength="100"
                 />
               </div>
 
@@ -396,7 +408,7 @@ const Header = ({ isLoading = false }) => {
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
                     </div>
                   ) : searchResults.length > 0 ? (
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-gray-  ">
                       {searchResults.map((product, index) => (
                         <div
                           key={`${product.id}-${index}`}
@@ -425,41 +437,13 @@ const Header = ({ isLoading = false }) => {
                               <p className="text-xs text-gray-500 mt-1">
                                 {product.category}
                               </p>
-                              <div className="mt-1 flex items-center">
-                                {product.variants &&
-                                  product.variants.length > 0 && (
-                                    <div className="flex items-center space-x-1">
-                                      {product.variants
-                                        .slice(0, 5)
-                                        .map((variant, i) => {
-                                          const cssColor = variant.color
-                                            .toLowerCase()
-                                            .replace(/\s+/g, "");
-                                          return (
-                                            <span
-                                              key={i}
-                                              className="w-3 h-1  border border-gray-200"
-                                              style={{
-                                                backgroundColor: cssColor,
-                                              }}
-                                              title={variant.color}
-                                            />
-                                          );
-                                        })}
-                                      {product.variants.length > 5 && (
-                                        <span className="text-xs text-gray-500">
-                                          +{product.variants.length - 5}
-                                        </span>
-                                      )}
-                                    </div>
-                                  )}
-                              </div>
+                              
                             </div>
                             <div className="flex flex-col items-end">
                               <span className="text-xs font-semibold text-gray-900">
                                 ₹
-                                {product.minPrice?.toFixed(2) ||
-                                  product.basePrice?.toFixed(2)}
+                                {product.minPrice?.toFixed(0) ||
+                                  product.basePrice?.toFixed(0)}
                               </span>
                             </div>
                           </div>
@@ -602,7 +586,7 @@ const Header = ({ isLoading = false }) => {
                 </button>
               </div>
 
-              <nav className="flex-1 flex flex-col p-6 space-y-6 poppins-thin overflow-y-auto">
+              <nav className="flex-1  poppins-medium flex flex-col p-6 space-y-6 poppins-thin overflow-y-auto">
                 <a
                   href="/"
                   className="text-[#484848] text-xs hover:text-black transition-colors"
@@ -637,6 +621,19 @@ const Header = ({ isLoading = false }) => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Contact
+                </a>
+                <a
+                  className="text-[#484848] text-xs hover:text-black transition-colors"
+                  onClick={() => {
+                    if (!userData) {
+                      setRequireLogin(true);
+                    } else {
+                      navigate("/orders");
+                    }
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Orders
                 </a>
               </nav>
 

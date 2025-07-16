@@ -227,7 +227,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="w-full h-full poppins-thin">
+    <div className="w-full  poppins-thin">
       {showToast && (
         <div className="fixed  top-20 right-2 z-50 overflow-hidden">
           <div
@@ -541,9 +541,9 @@ useEffect(() => {
         </div>
       ) : (
         <>
-          <div className="flex justify-center p-2 md:p-20">
+          <div className="  p-2 md:px-20 md:py-1">
             <div className="w-full md:p-6 rounded-lg    md:flex">
-              <div className="flex md:w-1/2 flex-col h-full">
+              <div className="flex md:w-1/2 flex-col ">
                 <form
                   onSubmit={formik.handleSubmit}
                   className="md:space-y-4  space-y-9 md:gap-4"
@@ -1013,7 +1013,7 @@ useEffect(() => {
                 </form>
 
                 {userAddresses.length > 0 && (
-                  <div className="mt-8 px-5">
+                  <div className="mt-8 px-3">
                     <h3 className="text-lg font-semibold mb-4 text-gray-800">
                       Saved Addresses
                     </h3>
@@ -1135,12 +1135,12 @@ useEffect(() => {
                 )}
               </div>
 
-              <div className="md:w-1/2 h-full ">
+              <div className="md:w-1/2 h-full py-8  ">
               <Payment selectedAddressId={selectedAddressId} />
               </div>
             </div>
           </div>
-          <Footer isLoading={isLoading} />{" "}
+          {/* <Footer isLoading={isLoading} />{" "} */}
         </>
       )}
     </div>

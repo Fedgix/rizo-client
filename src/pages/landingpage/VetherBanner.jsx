@@ -43,6 +43,7 @@ const VetherBanner = () => {
     swipe: true,
     touchThreshold: 10,
     edgeFriction: 0.35,
+    dots:true,
     appendDots: (dots) => (
       <div style={{ position: "absolute", bottom: "10px", width: "100%" }}>
         <ul className="flex justify-center gap-2">{dots}</ul>
@@ -159,7 +160,7 @@ const VetherBanner = () => {
         ))}
       </Slider>
 
-      <div className="flex justify-center md:mt-6 space-x-2">
+      <div className="flex justify-center md:mt-3 space-x-2">
         <button
           onClick={() => sliderRef?.slickPrev()}
           className="bg-white border border-gray-300 rounded-full p-2 w-8 h-8 flex items-center justify-center shadow-xl hover:bg-gray-100"

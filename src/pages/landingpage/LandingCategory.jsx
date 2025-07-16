@@ -248,7 +248,7 @@ const LandingCategory = () => {
         }
       `}</style>
 
-      <div className="absolute md:bottom-5 bottom-3 left-[49%] transform -translate-x-1/2 z-10 flex items-center gap-2">
+      <div className="absolute md:bottom-5 -bottom-2   left-[49%] transform -translate-x-1/2 z-10 flex items-center gap-2">
         <button
           onClick={() => sliderRef?.slickPrev()}
           className="w-8 h-8 bg-white border rounded-full shadow-xl flex items-center justify-center hover:bg-gray-100 transition-all active:scale-95"

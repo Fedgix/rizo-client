@@ -4,7 +4,6 @@ import Cookies from "js-cookie";
 
 const ProtectedRoute = () => {
   const user = Cookies.get("rizoUser");
-
   return user ? <Outlet /> : <Navigate to="/" replace />;
 };
 

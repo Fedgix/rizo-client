@@ -1,10 +1,57 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
-
+import { subscribe } from "../../services/user/user";
+const instagramImages = [
+  {
+    id: 1,
+    image: "social media/image (18).png",
+    alt: "Person in beige coat",
+    isSmall: true,
+  },
+  {
+    id: 2,
+    image: "social media/image (19).png",
+    alt: "Blue t-shirt",
+    isSmall: false,
+  },
+  {
+    id: 3,
+    image: "social media/image (20).png",
+    alt: "Black t-shirt with text",
+    isSmall: true,
+  },
+  {
+    id: 4,
+    image: "social media/image.png",
+    alt: "Person in black clothing",
+    isSmall: false,
+  },
+  {
+    id: 5,
+    image: "social media/image (22).png",
+    alt: "White hoodie",
+    isSmall: true,
+  },
+  {
+    id: 6,
+    image: "social media/image (23).png",
+    alt: "Person in light colored clothing",
+    isSmall: false,
+  },
+  {
+    id: 7,
+    image: "social media/image (24).png",
+    alt: "Person in light colored clothing",
+    isSmall: true,
+  },
+];
 const SocialMedia = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  const [email, setEmail] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   useEffect(() => {
     window.scrollTo(0, 0);
     // Simulate loading delay
@@ -14,60 +61,95 @@ const SocialMedia = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const instagramImages = [
-    {
-      id: 1,
-      image: "social media/image (18).png",
-      alt: "Person in beige coat",
-      isSmall: true,
-    },
-    {
-      id: 2,
-      image: "social media/image (19).png",
-      alt: "Blue t-shirt",
-      isSmall: false,
-    },
-    {
-      id: 3,
-      image: "social media/image (20).png",
-      alt: "Black t-shirt with text",
-      isSmall: true,
-    },
-    {
-      id: 4,
-      image: "social media/image.png",
-      alt: "Person in black clothing",
-      isSmall: false,
-    },
-    {
-      id: 5,
-      image: "social media/image (22).png",
-      alt: "White hoodie",
-      isSmall: true,
-    },
-    {
-      id: 6,
-      image: "social media/image (23).png",
-      alt: "Person in light colored clothing",
-      isSmall: false,
-    },
-    {
-      id: 7,
-      image: "social media/image (24).png",
-      alt: "Person in light colored clothing",
-      isSmall: true,
-    },
-  ];
-
   const validateAndSubmit = async () => {
     try {
+      if (!email.trim()) {
+        setShowToast(true);
+        setToastMessage("Please Enter Email");
+        setToastType("Fail");
+        return;
+      }
+      const respone = await subscribe(email);
+      if (respone.sutatus === "success") {
+        setShowToast(true);
+        setToastMessage(data.message);
+        setToastType("success");
+      }
     } catch (error) {
       console.log(error);
+      setShowToast(true);
+      setToastMessage("Please Try again");
+      setToastType("Fail");
     }
   };
 
+  useEffect(() => {
+    let timer;
+    if (showToast) {
+      timer = setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [showToast]);
+
   return (
     <div className="w-full bg-white py-12">
+      {showToast && (
+        <div className="fixed  top-20 right-2 z-50 overflow-hidden">
+          <div
+            className={`flex items-center w-full max-w-xs md:px-4 px-2 md:py-2 py-1 rounded-lg shadow ${
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+            style={{
+              transform: "translateX(0)",
+              animation: "0.1s ease-out 0s 1 normal forwards running slideIn",
+            }}
+            role="alert"
+          >
+            <div className="inline-flex items-center justify-center flex-shrink-0 w-4 h-4">
+              {toastType === "success" ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              )}
+            </div>
+            <div className="md:text-sm text-xs font-normal">{toastMessage}</div>
+          </div>
+          <style>{`
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+    `}</style>
+        </div>
+      )}
       {isLoading ? (
         // Skeleton layout when loading
         <div className="animate-pulse">
@@ -227,22 +309,14 @@ const SocialMedia = () => {
                   type="email"
                   placeholder="rizo@gmail.com"
                   className="w-full px-4 py-3 mb-4 bg-white shadow-lg border-none rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200"
-                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  value={email} // ✅ bind state
+                  onChange={(e) => setEmail(e.target.value)} // ✅ update state
                   required
-                  maxLength="320" // Maximum email length per RFC
-                  onChange={(e) => {
-                    // Basic client-side sanitization
-                    const sanitized = e.target.value.replace(
-                      /[^a-zA-Z0-9@._%+-]/g,
-                      ""
-                    );
-                    e.target.value = sanitized;
-                  }}
                 />
                 <button
                   className="bg-black text-white shadow-lg hover:bg-black/90 rounded px-7 py-2.5 text-xs font-medium w-full md:w-auto"
-                  type="button" // Prevent form submission without validation
                   onClick={validateAndSubmit}
+                  type="submit"
                 >
                   SUBSCRIBE NOW
                 </button>

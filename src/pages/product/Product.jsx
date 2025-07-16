@@ -366,6 +366,8 @@ const Product = () => {
       setShowToast(true);
     }
   };
+    console.log(userData)
+  
   return (
     <div className="w-full h-full bg-white">
       <Header isLoading={isLoading} />

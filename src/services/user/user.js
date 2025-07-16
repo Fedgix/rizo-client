@@ -206,9 +206,45 @@ export const createOrder = async () => {
       paymentMethod: "razorpay",
     };
     const { data } = await axiosConfig.post("checkout/create-order", payload);
-    return data;
+    return data.data;
   } catch (error) {
     console.log(error);
     throw new Error(error.response.data.error);
   }
 };
+
+export const successPayment = async (values) => {
+  try {
+    const { data } = await axiosConfig.post("checkout/verify-payment", values);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const paymentFailure = async (values) => {
+  try {
+    const { data } = await axiosConfig.post("checkout/payment-failure", values);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getOrders = async (page = 1) => {
+  try {
+    const { data } = await axiosConfig.get(`checkout/orders?page=${page}&limit=5`);
+    return data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const subscribe = async(value)=>{
+  try {
+    const {data} =  await axiosConfig.post("",value)
+    return data
+  } catch (error) {
+    console.log(error``)
+  }
+}
