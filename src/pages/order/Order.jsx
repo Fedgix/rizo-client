@@ -7,7 +7,6 @@ import { styled } from "@mui/material/styles";
 import { useEffect, useState, useCallback, memo } from "react";
 import { getOrders } from "../../services/user/user";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import InvoiceDownload from "./InvoiceDownload";
 import HTMLToPDF from "./Invoice";
 
 const ProductImageGrid = styled("div")({
